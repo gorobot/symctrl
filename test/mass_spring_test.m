@@ -1,6 +1,7 @@
 %% Dual Mass Spring Test
-clear all, clc, close all
+clear, clc, close all
 
+tic
 syms M1 B B1 K K1 M2 B2 K2 t y positive
 syms fo1(t) fo2(t)
 syms y1(t) y2(t)
@@ -8,18 +9,44 @@ syms y1(t) y2(t)
 f1 = M1*diff(y1, t, t) + (B + B1)*diff(y1, t) + (K + K1)*y1 - B*diff(y2, t) - K*y2 == fo1;
 f2 = M2*diff(y2, t, t) + (B + B2)*diff(y2, t) + (K + K2)*y2 - B1*diff(y1, t) - K*y1 == -fo2;
 
-g1 = y == y1 + y2;
+% g1 = y == y1 + y2;
+
+sys = eom2symss([f1, f2], [y1, diff(y1, t), y2, diff(y2, t)]);
+sys.inputs = [fo1 fo2];
+sys.g(1) = y1;
+sys.g(2) = y2;
+toc
+
+%%
+tic
+ic = {M1==0.1, B==1, B1==1, K==1, K1==1, M2==2, B2==1, K2==1};
+
+nlsim(sys|ic, [0 5], [1 0 0 0], 'vars', {y1})
+toc
+% T = 0:0.1:10;
+% figure
+% hold on
+% y = step(sys|ic, [1 0 0 0]);
+% ts = gettsdata(y, T);
+% plottsdata(ts, T);
+% % initial(sys|ic, [1 0 1 0]);
+% % plot(T, gettsdata(y(1), T));
+% hold off
+% toc
+% % linsys = linearize(sys);
+
+% impulse(linsys)
 
 % findstates({f1, f2})
 
-states = {y1, diff(y1, t), y2, diff(y2, t)};
-inputs = {fo1, fo2};
-outputs = {y};
-
-sv = symsv({f1, f2}, {g1}, ...
-    'states', states, ...
-    'inputs', inputs, ...
-    'outputs', outputs);
+% states = {y1, diff(y1, t), y2, diff(y2, t)};
+% inputs = {fo1, fo2};
+% outputs = {y};
+% 
+% sv = symsv({f1, f2}, {g1}, ...
+%     'states', states, ...
+%     'inputs', inputs, ...
+%     'outputs', outputs);
 
 % assume(y1(t) == 0)
 % assumeAlso(y2(t) == 0)

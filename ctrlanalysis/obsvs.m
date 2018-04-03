@@ -1,25 +1,25 @@
 function Ob = obsvs(A, C)
 %OBSVS Symbolic observability matrix
 % 
-%   Co = OBSVS(SYS) returns the observability matrix [C; C*A; C*A^2; ...]
+%   Ob = OBSVS(A, C) returns the observability matrix 
+%       Ob = [C; C*A; C*A^2; ...]
+
 p = inputParser;
-
-validateA = @(A) validateattributes(A, {'sym'}, {'square', 'nonempty'});
-validateC = @(C) validateattributes(C, {'sym'}, {'nonempty'});
-addRequired(p, 'A', validateA);
-addRequired(p, 'C', validateC);
-
+validateStateMatrix = @(M) ...
+    validateattributes(M, {'sym', 'numeric'}, {'square', 'nonempty'});
+validateOutputMatrix = @(M) ...
+    validateattributes(M, {'sym', 'numeric'}, ...
+                          {'nonempty', 'ncols', size(A, 2)});
+addRequired(p, 'A', validateStateMatrix);
+addRequired(p, 'C', validateOutputMatrix);
 parse(p, A, C);
-
-A = p.Results.A;
-C = p.Results.C;
 
 nx = size(A, 1);
 [cr, ~] = size(C);
 
 Ob = sym('Ob', [cr*nx nx]);
 
-Ob(1:cr,:) = C;
+Ob(1:cr, :) = C;
 
 for k = 2:nx
     prev = cr*(k - 2)+1:cr*(k - 1);

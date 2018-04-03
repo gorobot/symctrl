@@ -6,24 +6,30 @@
    <website/>
    <description/>
    <demosection>
-      <label>ctrldemos</label>
+      <label>examples</label>
       <demoitem>
-         <label>circuit</label>
+         <label>controllability_example</label>
          <type>other</type>
-         <source>circuit</source>
-         <file>ctrldemos/html/circuit.html</file>
+         <source>controllability_example</source>
+         <file>doc/examples/html/controllability_example.html</file>
       </demoitem>
       <demoitem>
-         <label>inverted_pendulum</label>
+         <label>elastic_roa_example</label>
          <type>other</type>
-         <source>inverted_pendulum</source>
-         <file>ctrldemos/html/inverted_pendulum.html</file>
+         <source>elastic_roa_example</source>
+         <file>doc/examples/html/elastic_roa_example.html</file>
       </demoitem>
       <demoitem>
-         <label>mass_spring</label>
+         <label>linearization_equilibrium_example</label>
          <type>other</type>
-         <source>mass_spring</source>
-         <file>ctrldemos/html/mass_spring.html</file>
+         <source>linearization_equilibrium_example</source>
+         <file>doc/examples/html/linearization_equilibrium_example.html</file>
+      </demoitem>
+      <demoitem>
+         <label>linearization_example</label>
+         <type>other</type>
+         <source>linearization_example</source>
+         <file>doc/examples/html/linearization_example.html</file>
       </demoitem>
    </demosection>
 </demos>

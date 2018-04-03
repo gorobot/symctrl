@@ -1,18 +1,18 @@
 function Co = ctrbs(A, B)
 %CTRBS Symbolic controllability matrix
 % 
-%   Co = CTRBS(SYS) returns the controllability matrix [B, A*B, A^2*B, ...]
+%   Co = CTRBS(A, B) returns the controllability matrix 
+%       Co = [B, A*B, A^2*B, ...]
+
 p = inputParser;
-
-validateA = @(A) validateattributes(A, {'sym'}, {'square', 'nonempty'});
-validateB = @(B) validateattributes(B, {'sym'}, {'nonempty'});
-addRequired(p, 'A', validateA);
-addRequired(p, 'B', validateB);
-
+validateStateMatrix = @(M) ...
+    validateattributes(M, {'sym', 'numeric'}, {'square', 'nonempty'});
+validateInputMatrix = @(M) ...
+    validateattributes(M, {'sym', 'numeric'}, ...
+                          {'nonempty', 'nrows', size(A, 1)});
+addRequired(p, 'A', validateStateMatrix);
+addRequired(p, 'B', validateInputMatrix);
 parse(p, A, B);
-
-A = p.Results.A;
-B = p.Results.B;
 
 nx = size(A, 1);
 [~, bc] = size(B);

@@ -1,26 +1,31 @@
 function D = ctrldemo(name, varargin)
 %CTRLDEMO Loads a demo system from memory.
 % 
-%   Detailed explanation goes here
+%   Available demo systems:
+%       - massspring    LTI, (Single mass)
+%       - massspring2   LTI, (Double mass)
+%       - pendulum      NLTI, (No friction)
+%       - pendulum2     NLTI, (No constants)
+%       - pendulum3     NLTI, (With constants)
+%       - pendulum4     NLTI, (With constants, input)
+%       - quadrotor     NLTI, (Quadrotor, euler angles)
+%       - vanderpol     NLTI, (Van der Pol equation, forward time)
+%       - vanderpol2    NLTI, (Van der Pol equation, reverse time)
+
 p = inputParser;
-
-validateName = @(arg) validateattributes(arg, {'char', 'string'}, {'nonempty'});
+validateName = @(arg) ...
+    validateattributes(arg, {'char', 'string'}, {'nonempty'});
 addRequired(p, 'name', validateName);
-
-% addParameter(p, 'Equations', true);
-% addParameter(p, 'StateVariables', true);
-% addParameter(p, 'StateSpace', false);
-% addParameter(p, 'TransferFunction', false);
-
 parse(p, name, varargin{:});
 
-% getEquations = p.Results.Equations;
-% getStateVariables = p.Results.StateVariables;
-% getStateSpace = p.Results.StateSpace;
-% getTransferFunction = p.Results.TransferFunction;
-
+% Load the system.
 S = load(name);
-D = S.demosys;
+D = S.sys;
+
+% Define constants in caller workspace.
+for k = S.C{:}
+    assignin('caller', char(k{:}), k{:});
+end
 
 end
 
