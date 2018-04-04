@@ -79,3 +79,5 @@ Contributors who do not follow the style guide will be asked to fix their submis
 
 ### Accepting Pull Requests
 Pull requests will always be accepted for working code that follows the above guidelines.
+
+Be sure to squash your commits when submitting a pull request.

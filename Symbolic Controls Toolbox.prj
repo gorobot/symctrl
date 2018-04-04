@@ -103,7 +103,6 @@ runTests.m
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}/CODE_OF_CONDUCT.md</file>
       <file>${PROJECT_ROOT}/CONTRIBUTING.md</file>
-      <file>${PROJECT_ROOT}/New Folder</file>
       <file>${PROJECT_ROOT}/README.md</file>
       <file>${PROJECT_ROOT}/STYLE.md</file>
       <file>${PROJECT_ROOT}/ctrlanalysis</file>
@@ -113,65 +112,10 @@ runTests.m
       <file>${PROJECT_ROOT}/ctrlplots</file>
       <file>${PROJECT_ROOT}/demos.xml</file>
       <file>${PROJECT_ROOT}/doc</file>
+      <file>${PROJECT_ROOT}/runAllTests.m</file>
     </fileset.rootfiles>
     <fileset.depfun.included />
-    <fileset.depfun.excluded>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/canon.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/ctrb.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/decompose.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/elroa.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/expm.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/iscontrollable.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/isobservable.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/isstable.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/linearize.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/lyap.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/normal.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/obsv.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/private/ctrbform.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/private/diagform.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/private/jordanform.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/private/lyapdiff.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/private/normalform.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/private/obsvform.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/roa.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symss/stm.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symtf/minreal.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlanalysis/@symtf/rhtable.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrldesign/@symss/care.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrldesign/@symss/dare.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrldesign/@symss/fblin.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrldesign/@symss/lqr.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrldesign/@symss/place.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@ctrlmodel/ctrlmodel.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/block.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/private/validabcd.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/private/varsub.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/simplify.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/subs.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/symss.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/symss2symss.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/symss2symtf.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/symssinfo.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symss/validatesystem.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symtf/subs.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symtf/symtf.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symtf/symtf2symss.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlmodels/@symtf/validatetf.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/impulse.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/initial.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/lsim.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/nlsim.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/nlsim2.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/private/linsolver.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/private/nlsolver.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/private/plotoutput.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/private/tzir.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/private/tzsr.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/step.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/zir.m</file>
-      <file>/Users/adam/Documents/MATLAB/Add-Ons/Toolboxes/Symbolic Controls Toolbox(3)/code/ctrlplots/@symss/zsr.m</file>
-    </fileset.depfun.excluded>
+    <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
       <file location="/Users/adam/Google Drive/programming/controls_toolbox" name="Symbolic Controls Toolbox.mltbx" optional="false">/Users/adam/Google Drive/programming/controls_toolbox/Symbolic Controls Toolbox.mltbx</file>
