@@ -10,19 +10,7 @@ parse(p, sys);
 L = @(f, h) gradient(f, sys.states).'*h;
 
 % Find f(x) and g(x).
-for k = 1:numel(sys.f)
-    C = coeffs(sys.f(k), sys.inputs, 'All');
-    if numel(C) == 2
-        f{k} = C(2);
-        g{k} = C(1);
-    else
-        f{k} = C;
-        g{k} = 0;
-    end
-end
-
-f = cell2sym(f).';
-g = cell2sym(g).';
+[f, g] = nlsep(sys);
 
 rho = 1;
 Lfh{1} = sys.g;

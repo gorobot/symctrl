@@ -2,11 +2,11 @@ function varargout = lsim(sys, u, varargin)
 %LSIM Compute the linear response of a system to arbitrary inputs.
 % 
 %   y = LSIM(sys, u, t) computes the linear response of a system to an
-%   arbitrary input where 'u' is a symbolic s-domain input signal or
+%   arbitrary input, where 'u' is a symbolic s-domain input signal or
 %   time-series data, and 't' is a time vector.
 %   
 %   y = LSIM(sys, u, t, x0) computes the linear response of a system to an
-%   arbitrary input where 'u' is time-series data, 't' is a time vector,
+%   arbitrary input, where 'u' is time-series data, 't' is a time vector,
 %   and 'x0' are the initial conditions.
 
 
@@ -25,7 +25,7 @@ addRequired(p, 'sys', @(S) validatesystem(S, {'full'}));
 addRequired(p, 'u', validateInput);
 addOptional(p, 'tspan', [0 5], validateTime);
 addOptional(p, 'x0', cell.empty, validateICs);
-addParameter(p, 'vars', cell.empty, validateVars);
+addParameter(p, 'Vars', cell.empty, validateVars);
 parse(p, sys, u, varargin{:});
 
 tspan = p.Results.tspan;

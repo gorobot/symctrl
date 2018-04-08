@@ -1,5 +1,6 @@
 function dV = lyapdiff(sys, V)
 %LYAPDIFF Differentiate a given Lyapunov equation.
+
 [tx, tu, tf, ~] = varsub(sys);
 Vs = subs(V, [sys.states; sys.inputs], [tx; tu]);
 dV = gradient(Vs, tx).'*reshape(tf, [], 1);

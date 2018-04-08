@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="4050033382" file="/Users/adam/Google Drive/programming/controls_toolbox/Symbolic Controls Toolbox.prj" location="/Users/adam/Google Drive/programming/controls_toolbox" name="Symbolic Controls Toolbox" target="target.toolbox" target-name="Package Toolbox">
+  <configuration build-checksum="949590748" file="/Users/adam/Google Drive/programming/controls_toolbox/Symbolic Controls Toolbox.prj" location="/Users/adam/Google Drive/programming/controls_toolbox" name="Symbolic Controls Toolbox" target="target.toolbox" target-name="Package Toolbox">
     <param.appname>Symbolic Controls Toolbox</param.appname>
     <param.authnamewatermark />
     <param.email />
@@ -49,6 +49,13 @@ runTests.m
     <param.examples>&lt;?xml version="1.0" encoding="utf-8"?&gt;
 &lt;examples&gt;
    &lt;exampleCategory name="examples"&gt;
+      &lt;example name="backward_reachability_example" type="html"&gt;
+         &lt;file type="source"&gt;/doc/examples/html/backward_reachability_example.html&lt;/file&gt;
+         &lt;file type="main"&gt;/doc/examples/backward_reachability_example.m&lt;/file&gt;
+         &lt;file type="thumbnail"&gt;/doc/examples/html/backward_reachability_example.png&lt;/file&gt;
+         &lt;file type="image"&gt;/doc/examples/html/backward_reachability_example_01.png&lt;/file&gt;
+         &lt;file type="image"&gt;/doc/examples/html/backward_reachability_example_02.png&lt;/file&gt;
+      &lt;/example&gt;
       &lt;example name="controllability_example" type="html"&gt;
          &lt;file type="source"&gt;/doc/examples/html/controllability_example.html&lt;/file&gt;
          &lt;file type="main"&gt;/doc/examples/controllability_example.m&lt;/file&gt;
@@ -108,6 +115,7 @@ runTests.m
       <file>${PROJECT_ROOT}/ctrlanalysis</file>
       <file>${PROJECT_ROOT}/ctrldemos</file>
       <file>${PROJECT_ROOT}/ctrldesign</file>
+      <file>${PROJECT_ROOT}/ctrllib</file>
       <file>${PROJECT_ROOT}/ctrlmodels</file>
       <file>${PROJECT_ROOT}/ctrlplots</file>
       <file>${PROJECT_ROOT}/demos.xml</file>

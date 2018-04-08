@@ -19,9 +19,9 @@ addRequired(p, 'sys');
 addRequired(p, 'u', validateInput);
 addOptional(p, 'tspan', [0 5], validateTime);
 addOptional(p, 'x0', cell.empty, validateICs);
-addParameter(p, 'vars', cell.empty, validateVars);
-addParameter(p, 'solver', @ode45, validateSolver);
-addParameter(p, 'trajectory', 'off');
+addParameter(p, 'Vars', cell.empty, validateVars);
+addParameter(p, 'Solver', @ode45, validateSolver);
+addParameter(p, 'Trajectory', 'off');
 parse(p, sys, u, varargin{:});
 
 tspan = p.Results.tspan;
@@ -73,7 +73,7 @@ else
     ax.XLabel.String = char(vars(1));
     ax.YLabel.String = char(vars(2));
     
-    if strcmp(p.Results.trajectory, 'on')
+    if strcmp(p.Results.Trajectory, 'on')
         xl = ax.XLim;
         yl = ax.YLim;
         

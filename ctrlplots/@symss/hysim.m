@@ -1,10 +1,12 @@
-function varargout = nlsim(sys, u, varargin)
-%NLSIM Simulate a non-linear system in one variable.
-%   Detailed explanation goes here
+function varargout = hysim(sys, u, varargin)
+%HSIM Compute the hybrid system response of a system to arbitrary inputs.
+%   
+%   [t, y] = HYSIM(sys, u, t) computes the response of a hybrid system to
+%   an arbitrary input. 
 
-%   References:
-%   Khalil, Hassan K. "Noninear systems." 
-%   Prentice-Hall, New Jersey 2.5 (1996): 5-1.
+% References:
+% Lygeros, John, Claire Tomlin, and Shankar Sastry. "Hybrid systems:
+% modeling, analysis and control." preprint (1999).
 
 p = inputParser;
 validateInput = @(U) ...
@@ -17,14 +19,11 @@ validateICs = @(P) ...
     validateattributes(P, {'numeric', 'cell'}, {'nonempty'});
 validateVars = @(V) ...
     validateattributes(V, {'sym', 'cell'}, {'nonempty'});
-validateSolver = @(S) ...
-    validateattributes(S, {'function_handle'}, {'nonempty'});
 addRequired(p, 'sys', @(S) validatesystem(S, {'full'}));
 addRequired(p, 'u', validateInput);
 addOptional(p, 'tspan', [0 5], validateTime);
 addOptional(p, 'x0', cell.empty, validateICs);
-addParameter(p, 'Vars', cell.empty, validateVars);
-addParameter(p, 'Solver', @ode45, validateSolver);
+addParameter(p, 'vars', cell.empty, validateVars);
 parse(p, sys, u, varargin{:});
 
 tspan = p.Results.tspan;
@@ -34,25 +33,20 @@ if ~iscell(x0)
     x0 = {x0};
 end
 
+if isempty(x0)
+    x0 = {zeros(1, numel(sys.states))};
+end
+
 if numel(x0) > 1
     t = cell(size(x0));
     y = cell(size(x0));
 end
 
-if any(strcmp('vars', p.UsingDefaults))
-    vars = sys.states(1);
-else
-    vars = cell2sym(p.Results.Vars);
-    if length(vars) ~= 1
-        error('Incorrect number of output variables.');
-    end
-end
-
 for k = 1:numel(x0)
     ic = reshape(x0{k}, [], 1);
-    [ts, ys] = nlsolver(sys, u, tspan, ic);
+    [ts, ys] = hysolver(sys, u, tspan, ic);
     t{k} = ts;
-    y{k} = ys(:, has(sys.states.', vars));
+    y{k} = ys;
 end
 
 if nargout ~= 0

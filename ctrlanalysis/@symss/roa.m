@@ -7,19 +7,22 @@ function R = roa(sys, varargin)
 %   R = ROA(sys, V) calculates the region of attraction for a state space
 %   model using a given Lyapunov equation.
 %   
-%   To calculate the region of attraction, the system performs the
-%   following steps:
-%   1. Calculate the derivative of the Lyapunov function.
-%   2. Obtain solutions for:
-%       .
-%       V = 0
-%   3. Solve for the equation:
-%       V(z), where 'z' are the solutions to the previous equation.
-% 
-%   The result R is the greatest solution to the equation V(z) = R.
-% 
 %   ROA(____) plots the region of attraction for a state space model
 %   using a given Lyapunov equation.
+% 
+%   Methodology:
+%   To calculate the region of attraction, the function performs the
+%   following actions:
+% 
+%   1. Compute a lyapunov function using the linearized system.
+%   2. Calculate the derivative of the Lyapunov function using the
+%      nonlinear dynamics.
+%   3. Obtain solutions for:
+%       .
+%       V = 0
+%   4. Solve for the equation:
+%       V(z), where 'z' are the solutions to the previous equation.
+%       The result R is the greatest solution to the equation V(z) = R.
 % 
 %   See also symss/elroa
 
@@ -31,7 +34,9 @@ parse(p, sys, varargin{:});
 
 if any(strcmp('V', p.UsingDefaults))
     linsys = linearize(sys);
-    V = lyap(linsys);
+    
+    Q = eye(size(sys.A));
+    [~, V] = lyap(linsys, Q);
 else
     V = p.Results.V;
 end
@@ -41,17 +46,6 @@ dV = lyapdiff(sys, V);
 [tx, tu, ~, ~] = varsub(sys);
 tv = subs(V, [sys.states; sys.inputs], [tx; tu]);
 dV = subs(dV, [sys.states; sys.inputs], [tx; tu]);
-
-% tv = subs(V, [sys.states; sys.inputs], [tx; tu]);
-
-% if isequal(dV, 0)
-%     error('Unable to calculate derivative of V.');
-% end
-
-% DV = subs(DV, Dx, sys.f);
-
-% V = formula(subs(V, sys.states, tx));
-% DV = formula(subs(DV, sys.states, tx));
 
 try
     sols = solve(dV, tx);

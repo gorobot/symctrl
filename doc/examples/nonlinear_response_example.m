@@ -13,11 +13,11 @@ tspan = [0 10];
 ic = {[1 0], [3 0], [pi 0]};
 
 figure
-nlsim(sys, tspan, ic, 'vars', {x1})
+nlsim(sys, tspan, ic, 'Vars', {x1})
 
 %% Plot the Response of Two Variables
 figure
-nlsim2(sys, tspan, ic, 'vars', {x1, x2});
+nlsim2(sys, tspan, ic, 'Vars', {x1, x2});
 
 %% Limit Cycles
 sys.f(2) = -10*sin(x1);

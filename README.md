@@ -12,7 +12,7 @@ toolbox currently available in Matlab and provide an interface for working with:
 * Discrete Systems
 * SISO & MIMO
 * Nonlinear Systems
-* Hybrid Systems (Coming soon)
+* Hybrid Systems
 * etc.
 
 New [releases](https://github.com/ajthor/symbolic-controls-toolbox/releases) are kept in the GitHub repository.
