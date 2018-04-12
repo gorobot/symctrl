@@ -2,9 +2,9 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
     %SYMSS Construct symbolic state-space model or convert model to 
     %symbolic state-space.
     %
-    %   sys = SYMSS creates an empty state space representation.
+    %   sys = SYMSS creates an empty state-space representation.
     %
-    %   A state-space model is similarly defined by state equations and
+    %   A state-space model is defined by state equations and
     %   output equations, given by:
     %
     %       dx/dt = f(t, x, u)
@@ -38,7 +38,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
     %   Antsaklis, Panos J., and Anthony N. Michel. A linear systems
     %   primer. Vol. 1. Boston: Birkhäuser, 2007.
     
-    % State Equations
+    % State equations.
     properties (Dependent, AbortSet = true)
         %State Equations
         f
@@ -46,7 +46,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         g
     end
     
-    % State Matrices
+    % State matrices.
     properties (SetAccess = immutable, Dependent)
         % State matrix A
         A
@@ -58,7 +58,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         D
     end
     
-    % State Variables
+    % State variables.
     properties (Dependent)
         % State Variables
         states
@@ -66,7 +66,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         inputs
     end
     
-    % Internal Properties
+    % Internal properties.
     properties (Access = private)
         f_ = sym.empty
         g_ = sym.empty
@@ -77,7 +77,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         Ts = sym.empty
     end
     
-    % Constructor.
+    % Constructor
     methods
         function obj = symss(varargin)
             %SYMSS Construct a symbolic state space model.
@@ -127,11 +127,12 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
                         end
                     else
                         error('symss:invalidArgument', ...
-                            'Invalid argument of type %s', class(varargin{1}));
+                              'Invalid arguments to symss constructor.');
                     end
                 else
                     error('symss:invalidArgument', ...
-                        'Invalid argument of type %s', class(varargin{1}));
+                          'Invalid argument of type %s', ...
+                          class(varargin{1}));
                 end
             else
                 % No input arguments.
@@ -139,6 +140,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         end
     end
     
+    % Utility methods.
     methods (Hidden)
         function [A, B, C, D] = getabcd(obj)
             %GETABCD Helper function to return state space matrices.
@@ -152,11 +154,11 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
     % Getters and setters.
     methods
         function obj = set.states(obj, varargin)
-            %Set state variables for state space model.
+            % Set state variables for state-space model.
             obj.states_ = reshape(cell2sym(varargin), [], 1);
         end
         function obj = set.inputs(obj, varargin)
-            %Set input variables for the state space model.
+            % Set input variables for the state-space model.
             obj.inputs_ = reshape(cell2sym(varargin), [], 1);
         end
         
@@ -164,36 +166,28 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         function inputs = get.inputs(obj), inputs = obj.inputs_; end
         
         function obj = set.f(obj, varargin)
-            %Set state function f(x)
-            obj.f_ = formula(varargin{:});
+            % Set state equation f(x)
+            obj = privSetF(obj, varargin{:});
         end
         function obj = set.g(obj, varargin)
-            %Set output function g(x)
-            obj.g_ = formula(varargin{:});
+            % Set output equation g(x)
+            obj = privSetG(obj, varargin{:});
         end
         
-        function f = get.f(obj), f = reshape(obj.f_, [], 1); end
-        function g = get.g(obj), g = reshape(obj.g_, [], 1); end
+        function f = get.f(obj), f = privGetF(obj); end
+        function g = get.g(obj), g = privGetG(obj); end
         
         function A = get.A(obj)
-            [tx, tu, tf, ~] = varsub(obj);
-            A = jacobian(tf, tx);
-            A = subs(A, [tx; tu], [obj.states_; obj.inputs_]);
+            A = privGetA(obj);
         end
         function B = get.B(obj)
-            [tx, tu, tf, ~] = varsub(obj);
-            B = jacobian(tf, tu);
-            B = subs(B, [tx; tu], [obj.states_; obj.inputs_]);
+            B = privGetB(obj);
         end
         function C = get.C(obj)
-            [tx, tu, ~, tg] = varsub(obj);
-            C = jacobian(tg, tx);
-            C = subs(C, [tx; tu], [obj.states_; obj.inputs_]);
+            C = privGetC(obj);
         end
         function D = get.D(obj)
-            [tx, tu, ~, tg] = varsub(obj);
-            D = jacobian(tg, tu);
-            D = subs(D, [tx; tu], [obj.states_; obj.inputs_]);
+            D = privGetD(obj);
         end
     end
     
@@ -212,6 +206,44 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
             T = simplify(obj);
             assume([expr{:}], 'clear');
             assume(a);
+        end
+    end
+    
+    % Overloadable protected methods.
+    methods (Access = protected)
+        function obj = privSetF(obj, varargin)
+            obj.f_ = formula(varargin{:});
+        end
+        function obj = privSetG(obj, varargin)
+            obj.g_ = formula(varargin{:});
+        end
+        
+        function f = privGetF(obj)
+            f = reshape(obj.f_, [], 1);
+        end
+        function g = privGetG(obj)
+            g = reshape(obj.g_, [], 1);
+        end
+        
+        function A = privGetA(obj)
+            [tx, tu, tf, ~] = varsub(obj);
+            A = jacobian(tf, tx);
+            A = subs(A, [tx; tu], [obj.states_; obj.inputs_]);
+        end
+        function B = privGetB(obj)
+            [tx, tu, tf, ~] = varsub(obj);
+            B = jacobian(tf, tu);
+            B = subs(B, [tx; tu], [obj.states_; obj.inputs_]);
+        end
+        function C = privGetC(obj)
+            [tx, tu, ~, tg] = varsub(obj);
+            C = jacobian(tg, tx);
+            C = subs(C, [tx; tu], [obj.states_; obj.inputs_]);
+        end
+        function D = privGetD(obj)
+            [tx, tu, ~, tg] = varsub(obj);
+            D = jacobian(tg, tu);
+            D = subs(D, [tx; tu], [obj.states_; obj.inputs_]);
         end
     end
 end

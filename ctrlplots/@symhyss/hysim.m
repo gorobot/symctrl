@@ -19,7 +19,7 @@ validateICs = @(P) ...
     validateattributes(P, {'numeric', 'cell'}, {'nonempty'});
 validateVars = @(V) ...
     validateattributes(V, {'sym', 'cell'}, {'nonempty'});
-addRequired(p, 'sys', @(S) validatesystem(S, {'full'}));
+addRequired(p, 'sys');
 addRequired(p, 'u', validateInput);
 addOptional(p, 'tspan', [0 5], validateTime);
 addOptional(p, 'x0', cell.empty, validateICs);

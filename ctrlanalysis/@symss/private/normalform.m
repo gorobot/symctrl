@@ -2,6 +2,13 @@ function T = normalform(sys)
 %NORMALFORM Summary of this function goes here
 %   Detailed explanation goes here
 
+% References:
+% http://ele.aut.ac.ir/~abdollahi/Lec_8_N11.pdf
+% https://wolfweb.unr.edu/~fadali/EE776/FeedbackLinearization.pdf
+% https://www.egr.msu.edu/~khalil/NonlinearSystems/Sample/Lect_22.pdf
+% 
+% https://www.math.ucdavis.edu/~krener/101-125/109.Chaos06.pdf
+% https://cse.sc.edu/~gatzke/cache/npc-Chapter3-scan.pdf
 validatesystem(sys, {'full', 'numinputs', 1});
 if ~iscontrollable(sys)
     error('System is not controllable.');

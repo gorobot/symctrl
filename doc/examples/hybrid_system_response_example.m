@@ -3,19 +3,33 @@
 
 %% Define the Hybrid System Model
 % Define the system model with hybrid dynamics.
-syms x u
-sys = symss;
+syms x
+sys = symhyss;
 sys.states = x;
-sys.inputs = u;
 
 a = 0.008;
-sys.f = piecewise(x >= 20, -a*x, x <= 22, -a*(x - 30));
 
-sys.g(1) = x;
+%%
+% The first index when defining system dynamics corresponds to a mode,
+% while the second index corresponds to a state equation in the current
+% dynamics. I.e.
+%                              .
+%   sys.f(2, 3) corresponds to x3 = f3(t, x, u) in state 2.
+% 
+%   sys.cond(1, 2) corresponds to the guard condition for the system
+%   switching from mode 1 to mode 2.
+sys.f(1, 1) = -a*x;
+sys.cond(1, 2) = x >= 20;
+
+sys.f(2, 1) = -a*(x - 30);
+sys.cond(2, 1) = x <= 22;
 
 %% Simulate the System
+% Define the time span and the initial conditions. 
 tspan = [0 120];
 ic = {15, 20, 25};
 
+%%
+% Simulate the hybrid system using the initial conditions.
 hysim(sys, sym(0), tspan, ic);
 

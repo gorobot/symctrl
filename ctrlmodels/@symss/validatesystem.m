@@ -5,16 +5,16 @@ function validatesystem(sys, varargin)
 %   specified attributes.
 %   
 %   Attributes:
-%   full - System must be fully defined.
-%   hasinput - System inputs must be defined.
-%   hasoutput - System output equations must be defined.
-%   controllable - System must be controllable.
-%   observable - System must be controllable.
+%       full - System must be fully defined.
+%       hasinput - System inputs must be defined.
+%       hasoutput - System output equations must be defined.
+%       controllable - System must be controllable.
+%       observable - System must be controllable.
 % 
-%   nstates - System must have N states.
-%   ninputs - System must have N inputs.
-%   nf - System must have N state equations.
-%   ng - System must have N output equations.
+%       nstates - System must have N states.
+%       ninputs - System must have N inputs.
+%       nf - System must have N state equations.
+%       ng - System must have N output equations.
 
 p = inputParser;
 validateChecks = @(C) validateattributes(C, {'cell'}, {'nonempty'});
