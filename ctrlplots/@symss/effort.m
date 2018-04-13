@@ -1,10 +1,14 @@
-function varargout = nlsim(sys, u, varargin)
-%NLSIM Simulate a non-linear system in one variable.
-%   Detailed explanation goes here
-
-%   References:
-%   Khalil, Hassan K. "Noninear systems." 
-%   Prentice-Hall, New Jersey 2.5 (1996): 5-1.
+function varargout = effort(sys, u, varargin)
+%EFFORT Compute the control effort of a system to arbitrary inputs.
+%   
+%   [t, y] = EFFORT(sys, u, t) computes the control effort of a system and
+%   returns the time series data in 't' and the control efforts in 'y'.
+% 
+%   EFFORT uses the simulated output of a system to compute the control
+%   effort. It uses the simulated outputs as inputs to the control function
+%   'u' to compute the control inputs at each time step.
+% 
+%   When no outputs are specified, EFFORT plots the output.
 
 p = inputParser;
 validateInput = @(U) ...
@@ -36,35 +40,33 @@ end
 
 if numel(x0) > 1
     t = cell(size(x0));
-    y = cell(size(x0));
+    us = cell(size(x0));
 end
 
-if any(strcmp('Vars', p.UsingDefaults))
-    vars = sys.states;
-else
-    vars = cell2sym(p.Results.Vars);
-    if length(vars) ~= 1
-        error('Incorrect number of output variables.');
-    end
-end
+T = sym('t');
+
+[ts, ys] = nlsim(sys, u, varargin{:});
+
+[tx, ~, ~, ~] = varsub(sys);
+Ufun = symfun(subs(u, sys.states, tx), [T; tx]);
+
+odefun = matlabFunction(Ufun, 'Vars', {T, tx});
 
 for k = 1:numel(x0)
-    ic = reshape(x0{k}, [], 1);
-    [ts, ys] = nlsolver(sys, u, tspan, ic);
-    t{k} = ts;
-    y{k} = ys(:, has(sys.states.', vars));
+    t{k} = ts{k};
+    us{k} = odefun(ts{k}.', ys{k}.').';
 end
 
 if nargout ~= 0
     varargout{1} = t;
-    varargout{2} = y;
+    varargout{2} = us;
 else
     ax = gca;
     current_state = ax.NextPlot;
     
     for k = 1:numel(x0)
         ax.NextPlot = 'add';
-        plot(t{k}, y{k})
+        plot(t{k}, us{k})
     end
     
     ax.NextPlot = current_state;

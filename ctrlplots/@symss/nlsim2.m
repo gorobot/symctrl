@@ -36,10 +36,10 @@ if nargout ~= 0 && numel(x0) > 1
     y = cell(size(x0));
 end
 
-if any(strcmp('vars', p.UsingDefaults))
+if any(strcmp('Vars', p.UsingDefaults))
     vars = sys.states(1:2);
 else
-    vars = cell2sym(p.Results.vars);
+    vars = cell2sym(p.Results.Vars);
     if length(vars) ~= 2
         error('Incorrect number of output variables.');
     end
