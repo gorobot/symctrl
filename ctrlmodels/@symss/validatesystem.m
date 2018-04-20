@@ -8,6 +8,7 @@ function validatesystem(sys, varargin)
 %       full - System must be fully defined.
 %       hasinput - System inputs must be defined.
 %       hasoutput - System output equations must be defined.
+%       discrete - System must be discrete.
 %       controllable - System must be controllable.
 %       observable - System must be controllable.
 % 
@@ -26,6 +27,7 @@ attributes = p.Results.attributes;
 va_ = @validateattributes;
 mf_ = mfilename;
 S = {'sym'};
+N = {'numeric'};
 
 for k = 1:numel(attributes)
     if ~ischar(attributes{k})
@@ -43,6 +45,8 @@ for k = 1:numel(attributes)
             va_(sys.B, S, {'nonempty'}, mf_, 'input matrix');
         case 'hasoutput'
             va_(sys.C, S, {'nonempty'}, mf_, 'output matrix');
+        case 'discrete'
+            va_(sys.Ts, N, {'nonempty', 'positive'}, mf_, 'sampling time');
         case 'SISO'
             va_(sys.B, S, {'column'}, mf_, 'input matrix');
             va_(sys.C, S, {'row'}, mf_, 'output matrix');

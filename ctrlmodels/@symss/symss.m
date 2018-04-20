@@ -27,12 +27,8 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
     %   sys = SYMSS(states, inputs) creates a state space model
     %   using the state variables and input variables provided.
     %   
-    %   sys = SYMSS(n) creates a state space model with n state
-    %   variables. Get the state variables from the 'states'
-    %   property in order to use them in a state equation.
-    % 
-    %   sys = SYMSS(____, Ts) creates a discrete state space model
-    %   with sample time Ts.
+    %   sys = SYMSS(Ts) creates a discrete state space model with sampling
+    %   time Ts.
     
     %   References:
     %   Antsaklis, Panos J., and Anthony N. Michel. A linear systems
@@ -40,7 +36,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
     
     % State equations.
     properties (Dependent, AbortSet = true)
-        %State Equations
+        % State Equations
         f
         % Ouput Equations
         g
@@ -66,6 +62,12 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         inputs
     end
     
+    % Hidden dependent properties.
+    properties (Dependent, Hidden)
+        % Sampling Time
+        Ts
+    end
+    
     % Internal properties.
     properties (Access = private)
         f_ = sym.empty
@@ -74,7 +76,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         states_ = sym.empty
         inputs_ = sym.empty
         
-        Ts = sym.empty
+        Ts_ = double.empty
     end
     
     % Constructor
@@ -96,9 +98,9 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
                             % Convert transfer function to state space.
                             obj = symtf2symss(varargin{1});
                         elseif isscalar(varargin{1})
-                            % First argument is just a number.
-                            n = varargin{1};
-                            obj.states_ = sym('x', [n, 1]);
+                            % First argument is just a number. This
+                            % indicates a discrete system.
+                            obj.Ts_ = varargin{1};
                         end
                     elseif ni == 2 && ...
                             isa(varargin{1}, 'sym') && ...
@@ -111,19 +113,19 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
                             varargin{k} = sym(varargin{k});
                         end
                         
-                        if validabcd(varargin{:}) 
-                            n = size(varargin{1}, 1);
-                            m = size(varargin{2}, 2);
-                            obj.states_ = sym('x', [n, 1]);
-                            
-                            obj.f_ = varargin{1}*obj.states_;
-                            obj.g_ = varargin{3}*obj.states_;
-                            
-                            if (all(varargin{2} == 0) - m) ~= 0
-                                obj.inputs_ = sym('u', [m, 1]);
-                                obj.f_ = obj.f_ + varargin{2}*obj.inputs_;
-                                obj.g_ = obj.g_ + varargin{4}*obj.inputs_;
-                            end
+                        validateabcd(varargin{:})
+                        
+                        n = size(varargin{1}, 1);
+                        m = size(varargin{2}, 2);
+                        obj.states_ = sym('x', [n, 1]);
+
+                        obj.f_ = varargin{1}*obj.states_;
+                        obj.g_ = varargin{3}*obj.states_;
+
+                        if (all(varargin{2} == 0) - m) ~= 0
+                            obj.inputs_ = sym('u', [m, 1]);
+                            obj.f_ = obj.f_ + varargin{2}*obj.inputs_;
+                            obj.g_ = obj.g_ + varargin{4}*obj.inputs_;
                         end
                     else
                         error('symss:invalidArgument', ...
@@ -188,6 +190,15 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
         end
         function D = get.D(obj)
             D = privGetD(obj);
+        end
+        
+        function obj = set.Ts(obj, varargin)
+            % Set sampling time Ts.
+            obj.Ts_ = varargin{1};
+        end
+        
+        function Ts = get.Ts(obj)
+            Ts = obj.Ts_;
         end
     end
     

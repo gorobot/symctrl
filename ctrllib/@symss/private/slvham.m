@@ -1,4 +1,4 @@
-function P = slvham(H)
+function P = slvham(H, varargin)
 %SLVHAM Solves the ARE using the Hamiltonian method.
 % 
 %   Methodology:
@@ -28,10 +28,18 @@ function P = slvham(H)
 
 p = inputParser;
 addRequired(p, 'H', @(M) ishamiltonian(M));
-parse(p, H);
+addParameter(p, 'exact', false);
+parse(p, H, varargin{:});
 
 % Compute the Schur decomposition.
-[U, ~] = schurs(H);
+if p.Results.exact
+    [U, S] = schurs(H);
+    [U, ~] = ordschurs(U, S, 'lhp');
+else
+    [U, S] = schur(double(H));
+    [U, ~] = ordschur(U, S, 'lhp');
+end
+
 U = mat2cell(U, size(H)/2, size(H)/2);
 
 cs = warning('off', 'all');
@@ -43,6 +51,10 @@ P = U{2, 1}/U{1, 1};
 % inverse does not exist.
 if any(isinf(P))
     P = U{2, 1}*pinv(U{1, 1});
+end
+
+if ~p.Results.exact
+    P = sym(P);
 end
 
 warning(cs);

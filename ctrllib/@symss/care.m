@@ -4,9 +4,9 @@ function [P, K] = care(sys, varargin)
 %   P = CARE(sys) solves the continuous algebraic Riccati equation for
 %   a symbolic state-space model and returns the solution P.
 % 
-%   P = CARE(sys, Q, R, S) solves the continuous algebraic Riccati equation
-%   using the matrices Q, R, and S. If omitted, Q defaults to I, R defaults
-%   to I, and S defaults to 0.
+%   P = CARE(sys, Q, R) solves the continuous algebraic Riccati equation
+%   using the matrices Q and R. If omitted, Q defaults to I, and R defaults
+%   to I.
 % 
 %   [P, K] = CARE(sys, ...) solves the continuous algebraic Riccati
 %   equation and returns the gain matrix, K.
@@ -17,16 +17,17 @@ function [P, K] = care(sys, varargin)
 %   of the IEEE 72.12 (1984): 1746-1754.
 
 p = inputParser;
-[A, B, C, ~] = getabcd(sys);
-% validateMatrix = @(M) isequal(M, M.') && isequal(size(A), size(M));
+[A, B, ~, ~] = getabcd(sys);
 validateMatrix = @(M) ...
     validateattributes(M, {'sym', 'numeric'}, ...
                        {'square', 'nonnegative', 'size', size(A)});
 addRequired(p, 'sys');
-addOptional(p, 'Q', eye(size(A)), validateMatrix);
+addOptional(p, 'Q', eye(size(A)));
 addOptional(p, 'R', eye(size(A)));
-addOptional(p, 'S', C.'*C);
+addParameter(p, 'exact', false);
 parse(p, sys, varargin{:});
+
+exact = p.Results.exact;
 
 Q = p.Results.Q;
 if ~issymmetric(Q)
@@ -38,15 +39,17 @@ if ~issymmetric(R)
     error('R must be symmetric.');
 end
 
-S = p.Results.S;
-
 Ri = inv(R);
 
 % Form the Hamiltonian.
-H = [A, -B*Ri*B.'; -S.'*Q*S, -A.'];
+H = [A, -B*Ri*B.'; -Q, -A.'];
+
+if ~isempty(symvar(H))
+    exact = true;
+end
 
 % Solve the continuous algebraic Riccati equation using the Hamiltonian.
-P = slvham(H);
+P = slvham(H, 'exact', exact);
 
 % Compute the gain matrix, K.
 K = Ri*B.'*P;

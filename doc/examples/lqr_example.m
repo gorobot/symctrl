@@ -12,16 +12,25 @@ sys.f(1) = x2;
 sys.f(2) = u;
 sys.g(1) = x1;
 
-Q = 1;
+Q = eye(2);
 R = rho;
 
 [K, P, L] = lqr(sys, Q, R);
 
 %%
-sys = symss([-3 2; 1 1], [0; 1], [1 -1], 0);
+A = [-3, 2; 1, 1];
+B = [0; 1];
+C = [1, -1];
+
+syms x1 x2 u
+sys = symss;
+sys.states = [x1 x2];
+sys.inputs = u;
+sys.f = A*sys.states + B*sys.inputs;
+sys.g = C*sys.states;
 
 R = 3;
-Q = 1;
+Q = C.'*C;
 
 [K, P, L] = lqr(sys, Q, R);
 

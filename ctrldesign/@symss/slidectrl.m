@@ -15,6 +15,10 @@ function u = slidectrl(sys, S, varargin)
 %                -1
 %   us = eta*(SB)  sign(sigma)
 % 
+%   'eta' is defined by:
+% 
+%   eta = L + alpha/sqrt(2)
+% 
 %   The switching function, which defaults to 'sign' can be changed by
 %   setting the 'SwitchingFunction' parameter. 
 % 
@@ -23,6 +27,7 @@ function u = slidectrl(sys, S, varargin)
 p = inputParser;
 addRequired(p, 'sys');
 addRequired(p, 'S');
+addOptional(p, 'eta', 1);
 addParameter(p, 'SwitchingFunction', @sign);
 parse(p, sys, S, varargin{:});
 
@@ -35,8 +40,8 @@ sigma = S*sys.states;
 ueq = -(S*B)\S*A*sys.states;
 
 % Compute surface control.
-eta = 1;
-us = eta*(S*B)\sf(sigma);
+eta = p.Results.eta;
+us = eta*inv(S*B)*sf(sigma);
 
 % Compute total control.
 u = ueq - us;

@@ -37,5 +37,11 @@
          <source>linearization_example</source>
          <file>doc/examples/html/linearization_example.html</file>
       </demoitem>
+      <demoitem>
+         <label>sliding_mode_control_example</label>
+         <type>other</type>
+         <source>sliding_mode_control_example</source>
+         <file>doc/examples/html/sliding_mode_control_example.html</file>
+      </demoitem>
    </demosection>
 </demos>

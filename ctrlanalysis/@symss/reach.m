@@ -37,7 +37,7 @@ function varargout = reach(sys, X, varargin)
 
 p = inputParser;
 validateNumber = @(N) ...
-    validateattributes(N, {'numeric'}, {'scalar', 'positive', 'integer'});
+    validateattributes(N, {'numeric'}, {'scalar', 'positive'});
 addRequired(p, 'sys', @(S) validatesystem(S, {'full'}));
 addRequired(p, 'x');
 addParameter(p, 'Points', 20, validateNumber);

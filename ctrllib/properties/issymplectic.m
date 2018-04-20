@@ -8,10 +8,10 @@ function tf = issymplectic(M)
 % 
 %   See also ishamiltonian
 
-sz = size(M);
+sz = size(M)/2;
 J = [zeros(sz), eye(sz); -eye(sz), zeros(sz)];
 
-tf = isequal(J\M.'*J, inv(M));
+tf = isequal(J\(M.')*J, inv(M));
 
 end
 

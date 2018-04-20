@@ -23,6 +23,7 @@ T = sym('t');
 
 % Substitute variables into the input.
 u = subs(u, sys.states, tx);
+u = reshape(u, [], 1);
 
 % Substitute the input into the state equations.
 tf = subs(tf, tu, u);

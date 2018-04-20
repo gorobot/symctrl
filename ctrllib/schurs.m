@@ -9,26 +9,41 @@ p = inputParser;
 validateMatrix = @(M) ...
     validateattributes(M, {'sym', 'numeric'}, {'nonempty'});
 addRequired(p, 'A', validateMatrix);
+addParameter(p, 'GramSchmidt', false);
 parse(p, A, varargin{:});
 
 if ~isa(A, 'sym')
     A = sym(A);
 end
 
-[V, D] = eig(A);
+[V, ~] = eig(A);
 
 % Find generalized eigenvectors when the matrix is defective, i.e. has
 % non-linearly independent eigenvectors. The Matlab command JORDAN returns
 % the generalized eigenvectors of a matrix.
 if ~isequal(size(V), size(A))
-    [V, J] = jordan(A);
-    D = diag(J);
+    [V, ~] = jordan(A);
 end
 
-[~, idx] = sort(real(diag(D)));
-V = V(:, idx);
+if p.Results.GramSchmidt
+    % Gram-Schmidt.
+    n = size(V, 2);
 
-[U, ~] = qr(V, 0, 'real');
+    U = zeros(size(V), 'like', V);
+
+    U(:, 1) = V(:, 1)/norm(V(:, 1));
+    for k = 2:n
+        U(:, k) = V(:, k);
+        for r = 1:k - 1
+            U(:, k) = U(:, k) - (U(:, k)'*U(:, r))/(U(:, r)'*U(:, r))*U(:, r);
+        end
+
+        U(:, k) = U(:, k)/norm(U(:, k));
+    end
+else
+    % QR
+    [U, ~] = qr(V, 0, 'real');
+end
 
 T = U.'*A*U;
 
