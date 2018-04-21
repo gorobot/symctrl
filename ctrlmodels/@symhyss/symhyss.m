@@ -14,15 +14,25 @@ classdef (SupportExtensionMethods = true) symhyss < symss
     %       f(1, 3) corresponds to x3 = f3(t, x, u) in mode 1.
     %
     %   The conditions are specified as an inequality matrix, indicating
-    %   the condition for switching to a new mode. For example,
+    %   the guard condition for switching to a new mode. For example,
     %   
     %       cond(1, 2) = x < 0 switches from mode 1 to mode 2 when x >= 0.
     %
+    %   Discontinuous jump states can be specified by setting the guard
+    %   condition along the main diagonal to 0 for the mode. Any nonzero
+    %   numeric values along the main diagonal are considered continuous.
+    %   For example,
+    %
+    %       cond(1, 1) = 1 specifies that mode 1 is continuous.
+    %       cond(2, 2) = 0 specifies that mode 2 is discontinuous.
+    %
     %   Additionally, the adjacency matrix defines the modes which are
-    %   available to switch to from the current mode. For example,
+    %   available from the current mode. For example,
     %
     %       edge(1, 2) = 1 means the system is allowed switch to mode 2
     %       from mode 1.
+    %
+    %   By default, all edges are enabled.
     %
     %   If a condition is specified for a specific transition, it also
     %   modifies the adjacency matrix to allow for the transition.
@@ -54,7 +64,7 @@ classdef (SupportExtensionMethods = true) symhyss < symss
     
     % Dependent properties.
     properties (Dependent, AbortSet = true)
-        % Switching Conditions
+        % Guard Conditions
         cond
         
         % Adjacency Matrix
@@ -67,16 +77,16 @@ classdef (SupportExtensionMethods = true) symhyss < symss
         % 1xn cell array. Each column represents a mode. Each element in
         % the cell array is a 1xm symbolic array representing system
         % dynamics of the mode.
-        f_ = cell.empty(1, 0)
+        f_ = cell.empty(0, 1)
         
         % Switching Conditions
-        % nxn cell array. Each row and column represents a mode. Each
-        % element in the cell array represents the switching conditions for
-        % activating the mode.
+        % nxn symbolic matrix. Each row and column represents a mode. Each
+        % element in the cell array represents the guard conditions for
+        % switching the mode.
         cond_ = sym.empty
         
         % Adjacency Matrix 
-        % The elements of the adjacency matrix represent the possibility of
+        % The elements of the adjacency matrix represent the probability of
         % switching to another mode.
         edge_ = double.empty
     end
@@ -219,15 +229,6 @@ classdef (SupportExtensionMethods = true) symhyss < symss
 
         function obj = privSetCond(obj, varargin)
             obj.cond_ = formula(varargin{:});
-            
-            % Set any unset edges that correspond to set conditions 1.
-            obj = privReshapeDim(obj);
-            idx = find(obj.cond_);
-            for nz = idx.'
-                if obj.edge_(nz) == 0
-                    obj.edge_(nz) = 1;
-                end
-            end
         end
         function obj = privSetEdge(obj, varargin)
             obj.edge_ = varargin{:};
@@ -252,7 +253,7 @@ classdef (SupportExtensionMethods = true) symhyss < symss
             n = max([nf, nc, mc, ne, mc]);
             
             if ~isequal(size(obj.cond_), [n, n])
-                C = zeros([n, n], 'sym');
+                C = eye([n, n], 'sym');
                 if ~isempty(obj.cond_)
                     C(1:nc, 1:mc) = obj.cond_;
                 end
@@ -260,7 +261,7 @@ classdef (SupportExtensionMethods = true) symhyss < symss
             end
             
             if ~isequal(size(obj.edge_), [n, n])
-                E = zeros([n, n], 'double');
+                E = double(~eye([n, n], 'double'));
                 if ~isempty(obj.edge_)
                     E(1:ne, 1:me) = obj.edge_;
                 end
@@ -299,19 +300,25 @@ classdef (SupportExtensionMethods = true) symhyss < symss
             switch S(1).type
                 case '.'
                     if numel(S) > 1
-                        idx = cell2mat(S(2).subs);
+                        idx = S(2).subs;
+                        c = strcmp(idx, ':');
+                        if any(c)
+                            idx(c) = {1:numel(obj.f)};
+                        end
+                        
+                        idx = cell2mat(idx);
                         
                         switch S(1).subs
                             case 'f'
                                 obj = privSetF(obj, idx, varargin{:});
                             otherwise
-                                obj = builtin('subsasgn', obj, S, varargin);
+                                obj = builtin('subsasgn', obj, S, varargin{:});
                         end
                     else
-                        obj = builtin('subsasgn', obj, S, varargin);
+                        obj = builtin('subsasgn', obj, S, varargin{:});
                     end
                 otherwise
-                    obj = builtin('subsasgn', obj, S, varargin);
+                    obj = builtin('subsasgn', obj, S, varargin{:});
             end
         end
     end

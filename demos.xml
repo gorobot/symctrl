@@ -26,6 +26,12 @@
          <file>doc/examples/html/elastic_roa_example.html</file>
       </demoitem>
       <demoitem>
+         <label>firefly_synchronization_example</label>
+         <type>other</type>
+         <source>firefly_synchronization_example</source>
+         <file>doc/examples/html/firefly_synchronization_example.html</file>
+      </demoitem>
+      <demoitem>
          <label>linearization_equilibrium_example</label>
          <type>other</type>
          <source>linearization_equilibrium_example</source>

@@ -1,18 +1,30 @@
-%% Thermostat Demo System
-
+%% Thermostat
+% The thermostat is a canonical hybrid switching model with 2 modes. Both
+% modes are continuous "flow" modes, which represent when a heater
+% controlled by the thermostat is either "on" or "off". 
+% 
+% Model:
+% 
+%   Mode 1                  Mode 2
+%    _______________         ____________________
+%   |               |       |                    |
+%   | dx/dt = -a*x  | ----> | dx/dt = -a(x - 30) |
+%   |               |       |                    |
+%   | x >= 20       | <---- | x <= 22            |
+%   |_______________|       |____________________|
+% 
+% Constants:
 % a - temperature cooling coeficient, a < 1
 syms a
 
-syms x1 u
+syms x
 sys = symhyss;
-sys.states = x1;
+sys.states = x;
 
-sys.f(1, 1) = -a*x1;
-sys.cond(1) = x1 >= 20;
+sys.f(1, 1) = -a*x;
+sys.cond(1, 2) = x >= 20;
 
-sys.f(2, 1) = -a*(x1 - 30);
-sys.cond(2) = x1 <= 22;
-
-% sys.f = piecewise(x1 >= 20, -a*x1, x1 <= 22, -a*(x1 - 30));
+sys.f(2, 1) = -a*(x - 30);
+sys.cond(2, 1) = x <= 22;
 
 savedemo('thermostat', sys, {a});
