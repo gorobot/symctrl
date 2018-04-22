@@ -72,6 +72,8 @@ Code contributions can address any of the areas of interest. For code contributi
 
 Pull requests should include a relevant issue in the description if they are in response to an issue.
 
+All pull requests should target the *development* branch, **NOT** the *master* branch. Additionally, all new branches should originate from *development*.
+
 ### Style
 **Follow the style guide!**
 
