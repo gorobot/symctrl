@@ -1,4 +1,4 @@
-classdef symopt
+classdef symopt < handle
     %SYMOPT Construct symbolic optimization model.
     %   
     %   opt = SYMOPT creates an empty symbolic optimization problem.

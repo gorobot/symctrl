@@ -1,6 +1,5 @@
 %% Spring-Mass-Damper Demo
 % Mass, spring, damper system, single frictionless mass.
-clear, clc, close all, reset(symengine)
 
 syms M C K B
 syms x1 x2 u

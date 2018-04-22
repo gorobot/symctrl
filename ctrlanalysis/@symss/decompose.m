@@ -1,13 +1,13 @@
 function varargout = decompose(sys)
 %DECOMPOSE Compute the Kalman decomposition of a state-space realization.
-% 
+%
 %   sys = DECOMPOSE(sys) computes the Kalman decomposition of a state-space
 %   realization.
-%   
+%
 %   [sys, n] = DECOMPOSE(sys) computes the Kalman decomposition of a
 %   state-space realization and returns the dimensions of the controllable
 %   and observable subspace of A.
-%   
+%
 %   [A, B, C, D] = DECOMPOSE(sys) computes the Kalman decomposition of a
 %   state-space realization and returns the controllable and observable
 %   subspace of the system.
@@ -16,13 +16,13 @@ p = inputParser;
 addRequired(p, 'sys', @(S) validatesystem(S, {'full'}));
 parse(p, sys);
 
-[A, B, C, ~] = getabcd(sys);
+[A, B, C] = sys.getabcd();
 
 n = size(A, 1);
 m = size(B, 2);
 p = size(C, 1);
 
-% Find the controllability and observability matrices. 
+% Find the controllability and observability matrices.
 Co = ctrbs(A, B);
 Ob = obsvs(A, C);
 
@@ -40,7 +40,7 @@ if nout == 1
 else
     nr = rank(Co);
     no = rank(N);
-    
+
     if nout == 2
         varargout{1} = T;
         varargout{2} = [nr, no];
@@ -56,4 +56,3 @@ else
 end
 
 end
-

@@ -1,19 +1,19 @@
 function R = roa(sys, varargin)
 %ROA Calculate region of attraction for a nonlinear system.
-%   
+%
 %   R = ROA(sys) calculates the region of attraction for a state space
 %   system using the Lyapunov function derived from the Lyapunov equation.
-% 
+%
 %   R = ROA(sys, V) calculates the region of attraction for a state space
 %   model using a given Lyapunov equation.
-%   
+%
 %   ROA(____) plots the region of attraction for a state space model
 %   using a given Lyapunov equation.
-% 
+%
 %   Methodology:
 %   To calculate the region of attraction, the function performs the
 %   following actions:
-% 
+%
 %   1. Compute a lyapunov function using the linearized system.
 %   2. Calculate the derivative of the Lyapunov function using the
 %      nonlinear dynamics.
@@ -23,7 +23,7 @@ function R = roa(sys, varargin)
 %   4. Solve for the equation:
 %       V(z), where 'z' are the solutions to the previous equation.
 %       The result R is the greatest solution to the equation V(z) = R.
-% 
+%
 %   See also symss/elroa
 
 p = inputParser;
@@ -34,16 +34,16 @@ parse(p, sys, varargin{:});
 
 if any(strcmp('V', p.UsingDefaults))
     linsys = linearize(sys);
-    
+
     Q = eye(size(sys.A));
-    [~, V] = lyap(linsys, Q);
+    V = lyap(linsys, Q);
 else
     V = p.Results.V;
 end
 
 dV = lyapdiff(sys, V);
-    
-[tx, tu, ~, ~] = varsub(sys);
+
+[tx, tu] = subvars(sys);
 tv = subs(V, [sys.states; sys.inputs], [tx; tu]);
 dV = subs(dV, [sys.states; sys.inputs], [tx; tu]);
 
@@ -54,7 +54,7 @@ try
         Vfun = symfun(tv, tx);
         R = double(max(Vfun(sols{:})));
     end
-    
+
 catch ME
     if strcmp(ME.identifier, 'something')
         % do something
@@ -100,4 +100,3 @@ if nargout == 0 && numel(sys.states) <= 2
 end
 
 end
-

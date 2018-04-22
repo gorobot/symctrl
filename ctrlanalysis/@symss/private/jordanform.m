@@ -1,11 +1,11 @@
-function T = jordanform(sys)
+function sys = jordanform(sys)
 %JORDANFORM Jordan canonical form.
-%   
-%   T = JORDANFORM(sys) converts a state space model to Jordan 
+%
+%   T = JORDANFORM(sys) converts a state space model to Jordan
 %   canonical form.
 
 % Get the matrix of eigenvectors.
-[A, B, C, D] = getabcd(sys);
+[A, B, C, D] = sys.getabcd();
 [V, ~] = eig(A);
 
 % Compute the similarity transformations using V.
@@ -13,9 +13,7 @@ A = V\A*V;
 B = V\B;
 C = C*V;
 
-T = sys;
-T.f = A*T.states + B*T.inputs;
-T.g = C*T.states + D*T.inputs;
-        
-end
+sys.f = A*sys.states + B*sys.inputs;
+sys.g = C*sys.states + D*sys.inputs;
 
+end

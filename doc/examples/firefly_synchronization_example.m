@@ -14,21 +14,23 @@ x = sym('x', [N, 1]);
 sys = symhyss;
 sys.states = x;
 
+sys.f(1) = ones([N, 1]);
+sys.f(2) = (1 + epsilon).*x - ...
+           (1 + epsilon).*x.*heaviside((1 + epsilon).*x - 1);
+
 %%
-% Set the continuous state. 
-sys.cond(1, 1) = 1;
+% Set the continuous and discontinuous states. 
+sys.guard(1, 1) = 1;
+sys.guard(2, 2) = 0;
 
 %%
 % Define the modes and the guard conditions.
-sys.cond(1, 2) = 1;
-sys.cond(2, 1) = 1;
+sys.guard(1, 2) = 1;
+sys.guard(2, 1) = 1;
 
 for k = 1:N
-    sys.f(1, k) = 1;
-    sys.cond(1, 2) = x(k) < 1 & sys.cond(1, 2);
-
-    sys.f(2, k) = (1 + epsilon).*x(k) - (1 + epsilon).*x(k)*heaviside((1 + epsilon).*x(k) - 1);
-    sys.cond(2, 1) = x(k) >= 1 & sys.cond(2, 1);
+    sys.guard(1, 2) = x(k) < 1 & sys.guard(1, 2);
+    sys.guard(2, 1) = x(k) >= 1 & sys.guard(2, 1);
 end
 
 %% Simulate the System

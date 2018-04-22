@@ -6,8 +6,8 @@ S = struct();
 t = sym('t');
 k = sym('k');
 
-% Check for nonlinear. 
-[A, B, C, D] = getabcd(sys);
+% Check for nonlinear.
+[A, B, C, D] = sys.getabcd();
 if nnz(has([A, B; C, D], [sys.states; sys.inputs])) ~= 0
     S.Type = 'NL';
 else
@@ -22,7 +22,7 @@ for v = [k, t]
             break;
         end
     end
-    
+
     if ~isempty(F)
         break;
     end
@@ -39,4 +39,3 @@ else
 end
 
 end
-

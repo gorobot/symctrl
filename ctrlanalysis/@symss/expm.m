@@ -13,8 +13,6 @@ function phi = expm(sys)
 %   inverse laplace transform of (sI-A)^-1, and less error-prone.
 
 syms s t
-A = sys.A;
-
 Phi = stm(sys);
 phi = ilaplace(Phi, s, t);
 

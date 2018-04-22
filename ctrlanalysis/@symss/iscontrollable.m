@@ -4,7 +4,7 @@ function tf = iscontrollable(sys)
 %and a logical 0 (false) if it is not.
 
 sys = symss(sys);
-[A, B, ~, ~] = sys.getabcd();
+[A, B] = sys.getabcd();
 
 n = length(A);
 L = unique(eig(A));
@@ -17,4 +17,3 @@ end
 tf = ~any(r < n);
 
 end
-

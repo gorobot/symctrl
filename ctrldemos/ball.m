@@ -3,9 +3,9 @@
 % first mode is a continuous "flow" mode, where the ball is in free-fall.
 % The second is a discontinuous "jump" mode, where the ball contacts the
 % ground.
-% 
+%
 % Model:
-% 
+%
 %   Mode 1                  Mode 2
 %    _______________         ___________________
 %   |               |       |                   |
@@ -14,7 +14,7 @@
 %   |               |       |                   |
 %   | x1 >= 0       | <---- | x1 <= 0 & x2 <= 0 |
 %   |_______________|       |___________________|
-% 
+%
 % Constants:
 % g - gravitational acceleration
 % k - damping coefficient
@@ -27,11 +27,11 @@ sys.states = [x1, x2];
 
 sys.f(1, 1) = x2;
 sys.f(1, 2) = -g;
-sys.cond(1, 2) = x1 >= 0;
+sys.guard(1, 2) = x1 >= 0;
 
 sys.f(2, 1) = -x1;
 sys.f(2, 2) = -k*x2;
-sys.cond(2, 1) = x1 <= 0 & x2 <= 0;
-sys.cond(2, 2) = 0;
+sys.guard(2, 1) = x1 <= 0 & x2 <= 0;
+sys.guard(2, 2) = 0;
 
 savedemo('ball', sys, {g, k});

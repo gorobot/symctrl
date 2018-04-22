@@ -10,9 +10,9 @@ function validatesystem(sys, varargin)
 %       nmodes - system must have N modes.
 
 p = inputParser;
-validateChecks = @(C) validateattributes(C, {'cell'}, {'nonempty'});
 addRequired(p, 'sys');
-addOptional(p, 'attributes', cell.empty, validateChecks);
+addOptional(p, 'attributes', cell.empty, ...
+    @(arg) validateattributes(arg, {'cell'}, {'nonempty'}));
 parse(p, sys, varargin{:});
 
 attributes = p.Results.attributes;
@@ -39,6 +39,7 @@ for k = 1:numel(attributes)
     end
 end
 
+    % Helper function to get arguments from list.
     function arg = getarg(attr, k)
         try
             arg = attr{k + 1};

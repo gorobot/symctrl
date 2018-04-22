@@ -1,4 +1,4 @@
-function T = obsvform(sys)
+function sys = obsvform(sys)
 %OBSVFORM Observable canonical form.
 %   
 %   T = OBSVFORM(sys) converts a state space system to observable
@@ -103,9 +103,8 @@ A = Q\A*Q;
 B = Q\B;
 C = C*Q;
 
-T = sys;
-T.f = A*T.states + B*T.inputs;
-T.g = C*T.states + D*T.inputs;
+sys.f = A*sys.states + B*sys.inputs;
+sys.g = C*sys.states + D*sys.inputs;
 
 end
 

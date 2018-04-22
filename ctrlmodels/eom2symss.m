@@ -12,9 +12,9 @@ function sys = eom2symss(eqns, states)
 %       state equations.
 
 p = inputParser;
-validateSym = @(S) validateattributes(S, {'sym'}, {'nonempty'});
-addRequired(p, 'eqns', validateSym);
-addRequired(p, 'states', validateSym);
+validateargs = @(arg) validateattributes(arg, {'sym'}, {'nonempty'});
+addRequired(p, 'eqns', validateargs);
+addRequired(p, 'states', validateargs);
 parse(p, eqns, states);
 
 sys = symss;

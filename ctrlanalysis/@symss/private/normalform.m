@@ -1,4 +1,4 @@
-function T = normalform(sys)
+function sys = normalform(sys)
 %NORMALFORM Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -67,9 +67,8 @@ Bc = [zeros(nd - 1, 1); 1];
 Cc = [1, zeros(1, nd - 1)];
 D = cell2sym(D).';
 
-T = sys;
-T.f = Ac*D + Bc*gamm*(T.inputs - alph);
-T.g = Cc*D;
+sys.f = Ac*D + Bc*gamm*(sys.inputs - alph);
+sys.g = Cc*D;
 
 if n - rdeg > 0
     warning('The system has a relative degree less than n. ');
@@ -90,7 +89,7 @@ if n - rdeg > 0
     eqn2 = subs(eqn, phi, sym('PHI'));
     C = coeffs(eqn2, sym('PHI'));
     
-    T.f = [C; T.f];
+    sys.f = [C; sys.f];
 end
 
 end

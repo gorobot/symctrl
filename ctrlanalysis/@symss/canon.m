@@ -1,4 +1,4 @@
-function T = canon(sys, varargin)
+function sys = canon(sys, varargin)
 %CANON Transform a state space model into a canonical form.
 % 
 %   T = CANON(sys, ...) converts a state space representation to a
@@ -19,13 +19,12 @@ function T = canon(sys, varargin)
 %   Vol. 1. Boston: Birkhäuser, 2007.
 
 p = inputParser;
-validateType = @(T) ...
-    ismember(T, {'c', 'C', 'co', 'Co', 'controllable', 'companion', ...
+types = {'c', 'C', 'co', 'Co', 'controllable', 'companion', ...
                  'o', 'O', 'ob', 'Ob', 'observable', ...
                  'j', 'J', 'jordan', 'Jordan', ...
-                 'k', 'kalman', 'Kalman'});
+                 'k', 'kalman', 'Kalman'};
 addRequired(p, 'sys', @(S) validatesystem(S, {'full'}));
-addOptional(p, 'Type', 'c', validateType);
+addOptional(p, 'Type', 'c', @(arg) ismember(arg, types));
 parse(p, sys, varargin{:});
 
 type = p.Results.Type;
@@ -33,19 +32,19 @@ type = p.Results.Type;
 switch type
     % Controllable or companion form.
     case {'c', 'C', 'co', 'Co', 'controllable', 'companion'} 
-        T = ctrbform(sys);
+        sys = ctrbform(sys);
         
     % Observable form.
     case {'o', 'O', 'ob', 'Ob', 'observable'} 
-        T = obsvform(sys);
+        sys = obsvform(sys);
         
     % Jordan form.
     case {'j', 'J', 'jordan', 'Jordan'}
-        T = jordanform(sys);
+        sys = jordanform(sys);
 
     % Kalman decomposition.
     case {'k', 'kalman', 'Kalman'}
-        T = kalmanform(sys);
+        sys = kalmanform(sys);
 end
 
 end

@@ -7,8 +7,7 @@ function Phi = stm(sys)
 %   Phi = STM(sys) computes the state transition matrix of a system.
 
 syms s
-A = sys.A;
-
+A = sys.getabcd();
 Phi = inv(s*speye(size(A)) - A);
     
 end

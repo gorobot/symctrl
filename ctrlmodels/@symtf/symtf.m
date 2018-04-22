@@ -1,19 +1,19 @@
 classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrlmodel
     %SYMTF Construct symbolic transfer function or convert model to
     %symbolic transfer function.
-    %   
-    %   G = SYMTF(expr) 
+    %
+    %   G = SYMTF(expr)
     %   creates a transfer function using a symbolic expression. The
     %   symbolic expression should be a polynomial function of one of the
     %   variables {s, z, p, q}.
-    %   
+    %
     %   G = SYMTF(num, den) creates a transfer function with numerator and
     %   denominator 'num' and 'den'. 'num' and 'den' can be scalar arrays
     %   or symbolic arrays representing the coefficients of a polynomial or
     %   symbolic expressions.
-    %   
+    %
     %   G = SYMTF creates the transfer function G(s) = 1.
-    
+
     % Transfer Function Properties
     properties (Access = public, Dependent)
         % Numerator
@@ -23,12 +23,12 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
         % Variable
         Variable
     end
-    
+
     % Transfer Function
     properties (Hidden, SetAccess = immutable, Dependent)
         tf
     end
-    
+
     % Internal Properties
     properties (Access = private)
         % Numerator
@@ -38,71 +38,83 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
         % Transfer Function Variable
         tfvar_ = sym.empty
     end
-    
+
     % Constants
     properties (Access = private, Constant)
         allowed = {'s', 'z', 'p', 'q'}
     end
-    
+
     methods
         function obj = symtf(varargin)
-            %SYMTF Symbolic transfer function constructor.
+            %SYMTF Construct a symbolic transfer function.
             ni = nargin;
-            
+
+            % Quick copy.
             if ni == 1 && isa(varargin{1}, 'symtf')
                 obj = varargin{1};
                 return;
             end
-            
+
             if ni ~= 0
                 if ni == 1
-                    if isa(varargin{1}, 'symss')
-                        validatesystem(varargin{1}, {'full'});
-                        obj = symss2symtf(varargin{1});
-                    else
-                        if ischar(varargin{1})
-                            if ~ismember(varargin{1}, obj.allowed)
-                                error('Transfer function variable must be one of {%c %c %c %c}', obj.allowed{:});
-                            end
-                            obj.tfvar_ = sym(varargin{1});
-                            obj.num_ = {obj.tfvar_};
-                            obj.den_ = {sym(1)};
-                        elseif isa(varargin{1}, 'sym')
-                            V = obj.getTFVar(varargin{1});
-                            if ~isempty(V)
-                                obj.tfvar_ = V;
-                            else
-                                obj.tfvar_ = sym('s');
-                            end
-                            
-                            obj.num_ = cell(size(varargin{1}));
-                            obj.den_ = cell(size(varargin{1}));
-                            
-                            [N, D] = numden(varargin{1});
-                            N = expand(N, 'ArithmeticOnly', true);
-                            D = expand(D, 'ArithmeticOnly', true);
-                            for k = 1:numel(N)
-                                obj.num_{k} = coeffs(N(k), obj.tfvar_, 'All');
-                                obj.den_{k} = coeffs(D(k), obj.tfvar_, 'All');
-                            end
+                    arg = varargin{1};
+                    if isa(arg, 'symss')
+                        % Convert state-space to transfer function.
+                        obj = symss2symtf(arg);
+                    elseif ischar(arg)
+                        % Symbolic variable.
+                        validateattributes(arg, {'char'}, {'nonempty'});
+                        if ~ismember(arg, obj.allowed)
+                            error(['Variable must be one of ', ...
+                                   '{%c %c %c %c}'], obj.allowed{:});
+                        end
+
+                        obj.tfvar_ = sym(arg);
+                        obj.num_ = {obj.tfvar_};
+                        obj.den_ = {sym(1)};
+
+                    elseif isa(arg, 'sym')
+                        validateattributes(arg, {'sym'}, {'scalar'});
+
+                        V = obj.findvar(arg);
+                        if ~isempty(V)
+                            obj.tfvar_ = V;
+                        else
+                            obj.tfvar_ = sym('s');
+                        end
+
+                        obj.num_ = cell(size(arg));
+                        obj.den_ = cell(size(arg));
+
+                        [N, D] = numden(arg);
+                        N = expand(N, 'ArithmeticOnly', true);
+                        D = expand(D, 'ArithmeticOnly', true);
+                        for k = 1:numel(N)
+                            obj.num_{k} = coeffs(N(k), obj.tfvar_, 'All');
+                            obj.den_{k} = coeffs(D(k), obj.tfvar_, 'All');
+                        end
 %                         elseif iscell(varargin{1})
-%                             V = obj.getTFVar(varargin{1});
+%                             V = obj.findvar(varargin{1});
 %                             if ~isempty(V)
 %                                 obj.tfvar_ = V;
 %                             else
 %                                 obj.tfvar_ = sym('s');
 %                             end
-%                             
+%
 %                             obj.num_ = cell(size(varargin{1}));
 %                             obj.den_ = cell(size(varargin{1}));
-%                             
+%
 %                             for k = 1:numel(varargin{1})
 %                                 obj.num_{k} = coeffs(N(k), obj.tfvar_, 'All');
 %                                 obj.den_{k} = coeffs(D(k), obj.tfvar_, 'All');
 %                             end
-                        end
                     end
                 elseif ni == 2
+                    % Coefficients of numerator and denominator.
+                    validateattributes(varargin{1}, ...
+                        {'sym', 'numeric', 'cell'}, {'nonempty'});
+                    validateattributes(varargin{2}, ...
+                        {'sym', 'numeric', 'cell'}, {'nonempty'});
                     obj.tfvar_ = sym('s');
                     obj.Numerator = varargin{1};
                     obj.Denominator = varargin{2};
@@ -115,19 +127,22 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
             end
         end
     end
-    
+
+    % Utility methods.
     methods (Hidden)
         function S = sym(obj)
+            %SYM Helper function to allow functionality with sym class
+            %functions.
             S = obj.tf;
         end
     end
-    
+
     methods (Access = private)
-        function Value = getTFVar(obj, p)
-            %GETTFVAR Finds the transfer function variable in the list of
+        function Value = findvar(obj, s)
+            %FINDVAR Finds the transfer function variable in the list of
             %allowed variables.
             if isempty(obj.tfvar_)
-                S = symvar(p);
+                S = symvar(s);
                 m = find(ismember(obj.allowed, S), 1);
                 Value = sym(obj.allowed(m));
             else
@@ -135,9 +150,9 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
             end
         end
     end
-    
+
     % Getters and Setters
-    methods  
+    methods
         function Value = get.Numerator(obj)
             N = cell(size(obj.num_));
             for k = 1:numel(obj.num_)
@@ -152,7 +167,7 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
             end
             Value = cell2sym(D);
         end
-        
+
         function obj = set.Numerator(obj, num)
             if isa(num, 'sym') && isscalar(num)
                 obj.num_ = {coeffs(num, obj.tfvar_, 'All')};
@@ -171,7 +186,7 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 error('Invalid numerator.');
             end
         end
-        
+
         function Value = get.tf(obj)
             N = obj.Numerator;
             D = obj.Denominator;
@@ -181,18 +196,19 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
             end
             Value = cell2sym(T);
         end
-        
+
         function Value = get.Variable(obj), Value = obj.tfvar_; end
-        
+
         function obj = set.Variable(obj, v)
-            if ~isa(v, 'sym')
+            validateattributes(v, {'sym', 'char'}, {'scalar'});
+            if isa(v, 'char')
                 obj.tfvar_ = sym(v);
             else
                 obj.tfvar_ = v;
             end
         end
     end
-    
+
     % Overloaded operators.
     methods
         function C = plus(A, B)
@@ -206,14 +222,14 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 G = A;
                 H = B;
             end
-            
+
             C.tfvar_ = G.tfvar_;
-            
+
             if ~isa(H, 'symtf')
                 if ~isa(H, 'sym')
                     H = sym(H);
                 end
-                
+
                 [N, D] = numden(H);
                 C.Numerator = G.Numerator*D + N*G.Denominator;
                 C.Denominator = G.Denominator*D;
@@ -225,7 +241,7 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 C.Denominator = G.Denominator*H.Denominator;
             end
         end
-        
+
         function C = mtimes(A, B)
             %MTIMES Overloaded to allow for transfer functions to be
             %multiplied without pole-zero cancellations.
@@ -237,14 +253,14 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 G = A;
                 H = B;
             end
-            
+
             C.tfvar_ = G.tfvar_;
-            
+
             if ~isa(H, 'symtf')
                 if ~isa(H, 'sym')
                     H = sym(H);
                 end
-                
+
                 [N, D] = numden(H);
                 C.Numerator = G.Numerator*N;
                 C.Denominator = G.Denominator*D;
@@ -256,7 +272,7 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 C.Denominator = G.Denominator*H.Denominator;
             end
         end
-        
+
         function C = mrdivide(A, B)
             %MRDIVIDE Overloaded to allow for transfer functions to be
             %divided without pole-zero cancellations.
@@ -270,9 +286,9 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 G = A;
                 H = B;
             end
-            
+
             C.tfvar_ = G.tfvar_;
-            
+
             if ~isa(H, 'symtf')
                 C.Numerator = G.Numerator;
                 C.Denominator = G.Denominator*H;
@@ -284,7 +300,7 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 C.Denominator = G.Denominator*H.Numerator;
             end
         end
-        
+
         function C = mpower(A, B)
             %MPOWER Overloaded to allow for transfer functions to use the
             %matrix power operator without pole-zero cancellations.
@@ -296,9 +312,9 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 G = A;
                 H = B;
             end
-            
+
             C.tfvar_ = G.tfvar_;
-            
+
             if ~isa(H, 'symtf')
                 C.Numerator = G.Numerator^H;
                 C.Denominator = G.Denominator^H;
@@ -306,12 +322,11 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) symtf < ctrl
                 if G.tfvar_ ~= H.tfvar_
                     error('Transfer functions must have the same variable.');
                 end
-                
+
                 C.Numerator = G.Numerator^H;
                 C.Denominator = G.Denominator^H;
             end
         end
     end
-    
-end
 
+end

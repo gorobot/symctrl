@@ -6,7 +6,7 @@ function [K, P, L] = lqr(sys, Q, R)
 % http://www.joinville.udesc.br/portal/professores/marianasantos/materiais/lqrnotes_Regra_de_Bryson.pdf
 
 % p = inputParser;
-[A, B, ~, ~] = getabcd(sys);
+[A, B] = sys.getabcd();
 % validateMatrix = @(M) isequal(M, M.') && isequal(size(A), size(M));
 % addRequired(p, 'sys');
 % addRequired(p, 'Q', validateMatrix);
@@ -18,4 +18,3 @@ function [K, P, L] = lqr(sys, Q, R)
 L = eig(A - B*K);
 
 end
-

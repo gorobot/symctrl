@@ -4,7 +4,7 @@ function tf = isobservable(sys)
 %a logical 0 (false) if it is not.
 
 sys = symss(sys);
-[A, ~, C, ~] = sys.getabcd();
+[A, ~, C] = sys.getabcd();
 
 n = length(A);
 L = unique(eig(A));
@@ -17,4 +17,3 @@ end
 tf = ~any(r < n);
 
 end
-

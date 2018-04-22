@@ -1,6 +1,5 @@
 %% Pendulum 2 (No Constants)
 % Pendulum equation.
-clear, clc, close all, reset(symengine)
 
 syms x1 x2 u
 sys = symss;

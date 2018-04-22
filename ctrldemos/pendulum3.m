@@ -1,6 +1,5 @@
 %% Pendulum (With Constants)
 % Pendulum equation.
-clear, clc, close all, reset(symengine)
 
 syms m l g k
 syms x1 x2

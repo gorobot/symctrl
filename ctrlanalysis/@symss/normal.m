@@ -1,4 +1,4 @@
-function T = normal(sys, varargin)
+function sys = normal(sys, varargin)
 %NORMAL Transform a state space system into a normal form.
 %   
 %   T = NORMAL(sys, ...) converts a state space representation to a normal
@@ -19,7 +19,7 @@ type = p.Results.Type;
 
 switch type
     case 'normal'
-        T = normalform(sys);
+        sys = normalform(sys);
 end
 
 end

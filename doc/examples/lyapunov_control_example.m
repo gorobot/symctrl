@@ -11,7 +11,7 @@ nlsim(sys, u, [0 10], {[5, 5]})
 
 %%
 linsys = linearize(sys);
-[~, V] = lyap(linsys);
+V = lyap(linsys);
 u = lyapctrl(sys, V);
 
 nlsim(sys, 0, [0 150], {[5, 5]})

@@ -22,9 +22,9 @@ sys = symhyss;
 sys.states = x;
 
 sys.f(1, 1) = -a*x;
-sys.cond(1, 2) = x >= 20;
+sys.guard(1, 2) = x >= 20;
 
 sys.f(2, 1) = -a*(x - 30);
-sys.cond(2, 1) = x <= 22;
+sys.guard(2, 1) = x <= 22;
 
 savedemo('thermostat', sys, {a});

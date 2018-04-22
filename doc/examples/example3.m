@@ -16,4 +16,4 @@ linsys = linearize(sys);
 sys.A
 linsys.A
 
-nlsim2(linsys|{C==0.1,L==0.1,R==10,u==0})
+nlsim2(linsys|{C==0.1,L==0.1,R==10,u==0}, 0)

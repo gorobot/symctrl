@@ -1,6 +1,6 @@
 classdef (SupportExtensionMethods = true) symhyss < symss
     %SYMHYSS Construct symbolic hybrid state-space model.
-    %   
+    %
     %   hsys = SYMHYSS creates an empty hybrid state-space representation.
     %
     %   A hybrid state-space model is defined by both continuous and
@@ -15,16 +15,16 @@ classdef (SupportExtensionMethods = true) symhyss < symss
     %
     %   The conditions are specified as an inequality matrix, indicating
     %   the guard condition for switching to a new mode. For example,
-    %   
-    %       cond(1, 2) = x < 0 switches from mode 1 to mode 2 when x >= 0.
+    %
+    %       guard(1, 2) = x < 0 switches from mode 1 to mode 2 when x >= 0.
     %
     %   Discontinuous jump states can be specified by setting the guard
     %   condition along the main diagonal to 0 for the mode. Any nonzero
     %   numeric values along the main diagonal are considered continuous.
     %   For example,
     %
-    %       cond(1, 1) = 1 specifies that mode 1 is continuous.
-    %       cond(2, 2) = 0 specifies that mode 2 is discontinuous.
+    %       guard(1, 1) = 1 specifies that mode 1 is continuous.
+    %       guard(2, 2) = 0 specifies that mode 2 is discontinuous.
     %
     %   Additionally, the adjacency matrix defines the modes which are
     %   available from the current mode. For example,
@@ -41,15 +41,15 @@ classdef (SupportExtensionMethods = true) symhyss < symss
     %       syms x a
     %       sys = symhyss
     %       sys.states = x
-    %       
+    %
     %       sys.f(1, 1) = -a*x
-    %       sys.cond(1, 2) = x >= 20
-    %       
+    %       sys.guard(1, 2) = x >= 20
+    %
     %       sys.f(2, 1) = -a*(x - 30)
-    %       sys.cond(2, 1) = x <= 22
+    %       sys.guard(2, 1) = x <= 22
     %
     %   See also symss
-    
+
     %   References:
     %   Van Der Schaft, Arjan J., and Johannes Maria Schumacher. An
     %   introduction to hybrid dynamical systems. Vol. 251. London:
@@ -61,145 +61,135 @@ classdef (SupportExtensionMethods = true) symhyss < symss
     %   Savkin, Andrey V., and Robin J. Evans. Hybrid dynamical systems:
     %   controller and sensor switching problems. Springer Science &
     %   Business Media, 2002.
-    
+
     % Dependent properties.
-    properties (Dependent, AbortSet = true)
+    properties (Dependent)
         % Guard Conditions
-        cond
-        
+        % The elements of the guard matrix are the guard conditions for
+        % staying in a current mode.
+        guard
+
         % Adjacency Matrix
+        % The elements of the adjacency matrix represent the probability of
+        % switching to another mode.
         edge
     end
-    
+
     % Internal properties.
     properties (Access = private)
         % State Dynamics
-        % 1xn cell array. Each column represents a mode. Each element in
-        % the cell array is a 1xm symbolic array representing system
-        % dynamics of the mode.
-        f_ = cell.empty(0, 1)
-        
-        % Switching Conditions
-        % nxn symbolic matrix. Each row and column represents a mode. Each
-        % element in the cell array represents the guard conditions for
-        % switching the mode.
-        cond_ = sym.empty
-        
-        % Adjacency Matrix 
-        % The elements of the adjacency matrix represent the probability of
-        % switching to another mode.
-        edge_ = double.empty
+        % 1xn cell array. Each element in the cell array is a 1xm symbolic
+        % array representing system dynamics of the mode.
+        f_@cell
+
+        guard_@sym
+        edge_@double
+
+        nmodes@double
     end
-    
+
     % Constructor
     methods
         function obj = symhyss(varargin)
-            %SYMHYSS Construct an instance of this class
-            %   Detailed explanation goes here
+            %SYMHYSS Construct a hybrid state-space model.
             ni = nargin;
-            
+
+            % Quick copy.
             if ni == 1 && isa(varargin{1}, 'symhyss')
                 obj = varargin{1};
                 return;
             end
-            
-            if ni ~= 0
-                % Handle states.
-                if isscalar(varargin{1})
-                    % First argument is numeric.
-                    n = varargin{1};
-                    obj.states_ = sym('x', [n, 1]);
-                elseif isa(varargin{1}, 'sym')
-                    obj.states = varargin(1);
-                else
-                    error('symhyss:invalidArgument', ...
-                          'Invalid argument to symhyss constructor.');
-                end
 
-                % Handle inputs.
-                if isscalar(varargin{2})
-                    % Second argument is numeric.
-                    m = varargin{2};
-                    obj.inputs_ = sym('u', [m, 1]);
-                elseif isa(varargin{2}, 'sym')
-                    obj.inputs = varargin(2);
+            if ni ~= 0
+                if ni == 1
+                    arg = varargin{1};
+                    validateattributes(arg, {'sym'}, {'vector'});
+                    obj.states = reshape(cell2sym(varargin(1)), [], 1);
+                elseif ni == 2
+                    validateattributes(varargin{1}, {'sym'}, {'vector'});
+                    validateattributes(varargin{2}, {'sym'}, {'vector'});
+                    obj.states = reshape(cell2sym(varargin(1)), [], 1);
+                    obj.inputs = reshape(cell2sym(varargin(2)), [], 1);
                 else
-                    error('symhyss:invalidArgument', ...
-                          'Invalid argument to symhyss constructor.');
+                    error('symhyss:invalidArguments', ...
+                          'Invalid arguments to symhyss constructor.');
                 end
-            else
-                % No output arguments.
             end
         end
     end
-    
+
     % Getters and setters.
     methods
-        function obj = set.cond(obj, varargin)
+        function obj = set.guard(obj, varargin)
             % Set switching conditions for hybrid modes.
-            obj = privSetCond(obj, varargin{:});
+            obj = privSetGuard(obj, varargin{:});
         end
         function obj = set.edge(obj, varargin)
             % Set adjacency for hybrid modes.
             obj = privSetEdge(obj, varargin{:});
         end
-        
-        function cond = get.cond(obj)
-            cond = privGetCond(obj);
+
+        function guard = get.guard(obj)
+            guard = privGetGuard(obj);
         end
         function edge = get.edge(obj)
             edge = privGetEdge(obj);
         end
     end
-    
+
     % Overloadable protected methods.
     methods (Access = protected)
         function obj = privSetF(obj, varargin)
-            if nargin == 2
-                obj.f_ = varargin{:};
+            if isempty(varargin{1})
+                obj.f_ = varargin(2:end);
             else
                 idx = varargin{1};
-                if numel(obj.f_) < idx(1)
-                    d = sym.empty(0, 1);
-                    d(idx(2)) = cell2sym(varargin(2:end));
+                if numel(idx) == 1
+                    obj.f_{idx{1}} = reshape(cell2sym(varargin(2:end)), [], 1);
                 else
-                    d = obj.f_{idx(1)};
-                    d(idx(2:end)) = cell2sym(varargin(2:end));
+                    if numel(obj.f_) < idx{1} 
+                        d = sym.empty(0, 1); 
+                        d(idx{2}) = cell2sym(varargin(2:end)); 
+                    else
+                        d = obj.f_{idx{1}};
+                        d(idx{2}) = cell2sym(varargin(2:end));
+                    end
+                    
+                    obj.f_{idx{1}} = reshape(d, [], 1);
                 end
-                
-                obj.f_(idx(1)) = {reshape(d, [], 1)};
             end
-            
+
+            obj.nmodes = numel(obj.f);
             obj = privReshapeDim(obj);
         end
         function f = privGetF(obj, varargin)
-            if nargin == 1
+            if isempty(varargin)
                 f = obj.f_;
             else
-                idx = varargin(1);
-                if numel(idx{:}) == 1
-                    f = obj.f_{idx{:}};
+                idx = varargin{1};
+                if numel(idx) == 1
+                    f = obj.f_{idx{1}};
                 else
                     d = obj.f_{idx{1}};
-                    f = d{idx{2}};
+                    f = d(idx{2:end});
                 end
             end
         end
-        
+
         function A = privGetA(obj, varargin)
-            [tx, tu, tf, ~] = varsub(obj);
-            
-            if nargin == 1
+            [tx, tu, tf] = subvars(obj);
+
+            if isempty(varargin)
                 for k = 1:numel(tf)
                     A{k} = jacobian(tf(k), tx);
                     A{k} = subs(A{k}, [tx; tu], [obj.states; obj.inputs]);
                 end
             else
-                idx = varargin(1);
+                idx = varargin{1};
                 if numel(idx{:}) == 1
                     f = tf(idx{:});
                 else
-                    error('Index is out of range.');
+                    error('Index exceeds matrix dimensions.');
                 end
 
                 A = jacobian(f, tx);
@@ -207,19 +197,19 @@ classdef (SupportExtensionMethods = true) symhyss < symss
             end
         end
         function B = privGetB(obj, varargin)
-            [tx, tu, tf, ~] = varsub(obj);
-            
-            if nargin == 1
+            [tx, tu, tf] = subvars(obj);
+
+            if isempty(varargin)
                 for k = 1:numel(tf)
                     B{k} = jacobian(tf(k), tu);
                     B{k} = subs(B{k}, [tx; tu], [obj.states; obj.inputs]);
                 end
             else
-                idx = varargin(1);
+                idx = varargin{1};
                 if numel(idx{:}) == 1
                     f = tf(idx{:});
                 else
-                    error('Index is out of range.');
+                    error('Index exceeds matrix dimensions.');
                 end
 
                 B = jacobian(f, tu);
@@ -227,39 +217,41 @@ classdef (SupportExtensionMethods = true) symhyss < symss
             end
         end
 
-        function obj = privSetCond(obj, varargin)
-            obj.cond_ = formula(varargin{:});
+        function obj = privSetGuard(obj, varargin)
+            validateattributes(varargin{:}, {'sym'}, {'nonempty'});
+            obj.guard_ = formula(varargin{:});
         end
         function obj = privSetEdge(obj, varargin)
+            validateattributes(varargin{:}, {'sym'}, {'nonempty'});
             obj.edge_ = varargin{:};
         end
-        
-        function cond = privGetCond(obj)
-            cond = obj.cond_;
+
+        function guard = privGetGuard(obj)
+            guard = obj.guard_;
         end
         function edge = privGetEdge(obj)
             edge = obj.edge_;
         end
     end
-    
+
     methods (Access = private)
         function obj = privReshapeDim(obj)
             % Reshape internal matrices to be as large as the number of
             % modes, or as large as the largest matrix.
             nf = numel(obj.f_);
-            [nc, mc] = size(obj.cond_);
+            [ng, mg] = size(obj.guard_);
             [ne, me] = size(obj.edge_);
-            
-            n = max([nf, nc, mc, ne, mc]);
-            
-            if ~isequal(size(obj.cond_), [n, n])
+
+            n = obj.nmodes;
+
+            if ~isequal(size(obj.guard_), [n, n])
                 C = eye([n, n], 'sym');
-                if ~isempty(obj.cond_)
-                    C(1:nc, 1:mc) = obj.cond_;
+                if ~isempty(obj.guard_)
+                    C(1:ng, 1:mg) = obj.guard_;
                 end
-                obj.cond_ = C;
+                obj.guard_ = C;
             end
-            
+
             if ~isequal(size(obj.edge_), [n, n])
                 E = double(~eye([n, n], 'double'));
                 if ~isempty(obj.edge_)
@@ -269,58 +261,52 @@ classdef (SupportExtensionMethods = true) symhyss < symss
             end
         end
     end
-    
+
     % Overloaded subsref & subsasgn.
     methods
         function varargout = subsref(obj, S)
-            switch S(1).type
-                case '.'
-                    if numel(S) > 1
-                        idx = cell2mat(S(2).subs);
-                        
-                        switch S(1).subs
-                            case 'f'
-                                varargout = {privGetF(obj, idx)};
-                            case 'A'
-                                varargout = {privGetA(obj, idx)};
-                            case 'B'
-                                varargout = {privGetB(obj, idx)};
-                            otherwise
-                                [varargout{1:nargout}] = builtin('subsref', obj, S);
-                        end
-                    else
-                        [varargout{1:nargout}] = builtin('subsref', obj, S);
-                    end
-                otherwise
-                    [varargout{1:nargout}] = builtin('subsref', obj, S);
+            if strcmp(S(1).type, '.') && strcmp(S(1).subs, 'f')
+                if numel(S) == 1
+                    error('Not enough input arguments.');
+                end
+                
+                idx = S(2).subs;
+                varargout = {privGetF(obj, idx)};
+                
+            elseif strcmp(S(1).type, '.') && strcmp(S(1).subs, 'A')
+                if numel(S) == 1
+                    error('Not enough input arguments.');
+                end
+                
+                idx = S(2).subs;
+                varargout = {privGetA(obj, idx)};
+                
+            elseif strcmp(S(1).type, '.') && strcmp(S(1).subs, 'B')
+                if numel(S) == 1
+                    error('Not enough input arguments.');
+                end
+                
+                idx = S(2).subs;
+                varargout = {privGetB(obj, idx)};
+
+            else
+                [varargout{1:nargout}] = builtin('subsref', obj, S);
             end
         end
-        
+
         function obj = subsasgn(obj, S, varargin)
-            switch S(1).type
-                case '.'
-                    if numel(S) > 1
-                        idx = S(2).subs;
-                        c = strcmp(idx, ':');
-                        if any(c)
-                            idx(c) = {1:numel(obj.f)};
-                        end
-                        
-                        idx = cell2mat(idx);
-                        
-                        switch S(1).subs
-                            case 'f'
-                                obj = privSetF(obj, idx, varargin{:});
-                            otherwise
-                                obj = builtin('subsasgn', obj, S, varargin{:});
-                        end
-                    else
-                        obj = builtin('subsasgn', obj, S, varargin{:});
-                    end
-                otherwise
-                    obj = builtin('subsasgn', obj, S, varargin{:});
+            if strcmp(S(1).type, '.') && strcmp(S(1).subs, 'f')
+                if numel(S) > 1
+                    idx = S(2).subs;
+                else
+                    % Reject assignment to entire cell.
+                    error('Not enough input arguments.');
+                end
+                
+                obj = privSetF(obj, idx, varargin{:});
+            else
+                obj = builtin('subsasgn', obj, S, varargin{:});
             end
         end
     end
 end
-

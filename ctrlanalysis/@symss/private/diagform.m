@@ -1,4 +1,4 @@
-function T = diagform(sys)
+function sys = diagform(sys)
 %DIAGFORM Diagonal canonical form.
 %   
 %   T = DIAGFORM(sys) converts a state space model to diagonal

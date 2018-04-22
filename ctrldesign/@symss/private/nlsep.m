@@ -1,15 +1,15 @@
 function [f, g] = nlsep(sys)
 %NLSEP Separate nonlinear functions into f(x) and g(x).
-%   
+%
 %   [f, g] = NLSEP(sys) separates the state equations into f(x) and g(x).
-% 
+%
 %   From state equations of the form:
 %   .
 %   x = f(x) + g(x)*u
-% 
+%
 %   The function returns f(x) and g(x).
 
-[A, ~, ~, ~] = getabcd(sys);
+A = sys.getabcd();
 
 f = cell([size(A, 1), 1]);
 g = cell([size(A, 1), 1]);
@@ -29,4 +29,3 @@ f = cell2sym(f).';
 g = cell2sym(g).';
 
 end
-

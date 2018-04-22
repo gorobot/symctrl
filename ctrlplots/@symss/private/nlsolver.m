@@ -19,7 +19,7 @@ parse(p, sys, u, varargin{:});
 
 T = sym('t');
 
-[tx, tu, tf, ~] = varsub(sys);
+[tx, tu, tf] = subvars(sys);
 
 % Substitute variables into the input.
 u = subs(u, sys.states, tx);
@@ -41,4 +41,3 @@ solver = p.Results.Solver;
 [t, y] = feval(solver, odefun, tspan, x0);
 
 end
-

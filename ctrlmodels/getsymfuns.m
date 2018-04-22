@@ -1,6 +1,8 @@
 function [F, args] = getsymfuns(expr)
 %GETSYMFUNS Finds all symbolic functions in an expression.
 
+validateattributes(expr, {'sym'}, {'nonempty'});
+
 args = argnames(expr);
 F = formula(expr);
 

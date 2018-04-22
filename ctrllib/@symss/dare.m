@@ -1,13 +1,13 @@
 function [P, K] = dare(sys, varargin)
 %DARE Solve the discrete algebraic Riccati equation.
-%   
+%
 %   P = DARE(sys) solves the discrete algebraic Riccati equation for
 %   a symbolic state-space model and returns the solution P.
-% 
+%
 %   P = DARE(sys, Q, R) solves the discrete algebraic Riccati equation
 %   using the matrices Q and R. If omitted, Q defaults to I, and R defaults
 %   to I.
-% 
+%
 %   [P, K] = DARE(sys, ...) solves the discrete algebraic Riccati
 %   equation and returns the gain matrix, K.
 
@@ -16,7 +16,7 @@ function [P, K] = dare(sys, varargin)
 % Kybernetika 8.5 (1972): 430-447.
 
 p = inputParser;
-[A, B, ~, ~] = getabcd(sys);
+[A, B] = sys.getabcd();
 validateMatrix = @(M) ...
     validateattributes(M, {'sym', 'numeric'}, ...
                        {'square', 'nonnegative', 'size', size(A)});
@@ -53,4 +53,3 @@ P = slvdham(H, 'exact', p.Results.exact);
 K = (R + B.'*P*B)\B.'*P*A;
 
 end
-

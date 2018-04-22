@@ -1,4 +1,4 @@
-function T = simplify(sys, varargin)
+function sys = simplify(sys, varargin)
 %SIMPLIFY Simplify a state space model.
 %
 %   sys = SIMPLIFY(sys, ...)
@@ -11,12 +11,7 @@ function T = simplify(sys, varargin)
 % 
 %   See also sym/simplify
 
-p = inputParser;
-addRequired(p, 'sys');
-parse(p, sys);
-
-T = sys;
-T.f = simplify(sys.f, varargin{:});
-T.g = simplify(sys.g, varargin{:});
+sys.f = simplify(sys.f, varargin{:});
+sys.g = simplify(sys.g, varargin{:});
 
 end

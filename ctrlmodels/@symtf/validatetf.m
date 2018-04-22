@@ -5,9 +5,9 @@ function validatetf(G, varargin)
 %   have specified attributes.
 
 p = inputParser;
-validateChecks = @(C) validateattributes(C, {'cell'}, {'nonempty'});
 addRequired(p, 'G');
-addOptional(p, 'attributes', cell.empty, validateChecks);
+addOptional(p, 'attributes', cell.empty, ...
+    @(arg) validateattributes(arg, {'cell'}, {'nonempty'}));
 parse(p, G, varargin{:});
 
 attributes = p.Results.attributes;
@@ -32,10 +32,10 @@ for k = 1:numel(attributes)
             va_(G.num_, {'cell'}, {'size', [1, 1]}, mf_, 'numerator');
             va_(G.den_, {'cell'}, {'size', [1, 1]}, mf_, 'denominator');
         % Attributes with arguments.
-        case 'nstates'
     end
 end
 
+    % Helper function to get arguments from list.
     function arg = getarg(attr, k)
         try
             arg = attr{k + 1};

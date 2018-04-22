@@ -1,5 +1,5 @@
 function [t, y] = hysolver(sys, u, varargin)
-%HYSOLVER Internal hybrid function solver. 
+%HYSOLVER Internal hybrid function solver.
 %   Detailed explanation goes here
 
 p = inputParser;
@@ -20,8 +20,8 @@ parse(p, sys, u, varargin{:});
 T = sym('t');
 
 % Get the state equations and conditions.
-[tx, tu, tf, ~] = varsub(sys);
-conds = sys.cond;
+[tx, tu, tf] = subvars(sys);
+conds = sys.guard;
 edges = sys.edge;
 
 % Substitute variables into the input.
@@ -62,17 +62,17 @@ idx = find(icond, 1);
 % Simulate the hybrid system.
 while t0 < tmax
     x0 = reshape(x0, [], 1);
-    
+
     if isempty(nmode)
         break;
     else
         mode = nmode;
     end
-    
+
     % Create a Matlab function.
     Ffun = symfun(tf{mode}, [T; tx]);
     odefun = matlabFunction(Ffun, 'Vars', {T, tx});
-    
+
     % Handle discontinuous jumps. If the mode is discontinuous, meaning
     % there is a 0 probability of staying within the current mode, evaluate
     % the current conditions and continue.
@@ -81,19 +81,19 @@ while t0 < tmax
         t(end + 1, :) = t(end) + eps('double');
         y(end + 1, :) = xn.';
         x0 = xn;
-        
+
         guard = isAlways(subs(conds(mode, :), tx, xn));
         % Find next mode.
         nmode = find(~guard & edges(mode, :), 1);
         continue;
     end
-    
+
     % Set event function.
     options = odeset('Events', @odeEvent);
 
     % Solve the function.
     [tt, yy, t0, x0, ~] = feval(solver, odefun, [t0 tmax], x0, options);
-    
+
     t = [t; tt];
     y = [y; yy];
 end
@@ -114,4 +114,3 @@ end
         direction = 0;
     end
 end
-

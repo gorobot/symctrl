@@ -1,6 +1,5 @@
 %% Van der Pol Equation (Reverse Time)
 % Van der Pol equation in reverse time.
-clear, clc, close all, reset(symengine)
 
 syms x1 x2
 sys = symss;

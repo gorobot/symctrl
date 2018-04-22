@@ -1,23 +1,23 @@
 function [P, K] = care(sys, varargin)
 %CARE Solve the continuous algebraic Riccati equation.
-%   
+%
 %   P = CARE(sys) solves the continuous algebraic Riccati equation for
 %   a symbolic state-space model and returns the solution P.
-% 
+%
 %   P = CARE(sys, Q, R) solves the continuous algebraic Riccati equation
 %   using the matrices Q and R. If omitted, Q defaults to I, and R defaults
 %   to I.
-% 
+%
 %   [P, K] = CARE(sys, ...) solves the continuous algebraic Riccati
 %   equation and returns the gain matrix, K.
 
 %   References:
-%   Arnold, William F., and Alan J. Laub. "Generalized eigenproblem 
-%   algorithms and software for algebraic Riccati equations." Proceedings 
+%   Arnold, William F., and Alan J. Laub. "Generalized eigenproblem
+%   algorithms and software for algebraic Riccati equations." Proceedings
 %   of the IEEE 72.12 (1984): 1746-1754.
 
 p = inputParser;
-[A, B, ~, ~] = getabcd(sys);
+[A, B] = sys.getabcd();
 validateMatrix = @(M) ...
     validateattributes(M, {'sym', 'numeric'}, ...
                        {'square', 'nonnegative', 'size', size(A)});
@@ -55,4 +55,3 @@ P = slvham(H, 'exact', exact);
 K = Ri*B.'*P;
 
 end
-

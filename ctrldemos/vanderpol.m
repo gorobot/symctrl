@@ -1,6 +1,5 @@
 %% Van der Pol Equation
 % Van der Pol equation.
-clear, clc, close all, reset(symengine)
 
 syms x1 x2
 sys = symss;

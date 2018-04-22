@@ -1,13 +1,13 @@
 function varargout = effort(sys, u, varargin)
 %EFFORT Compute the control effort of a system to arbitrary inputs.
-%   
+%
 %   [t, y] = EFFORT(sys, u, t) computes the control effort of a system and
 %   returns the time series data in 't' and the control efforts in 'y'.
-% 
+%
 %   EFFORT uses the simulated output of a system to compute the control
 %   effort. It uses the simulated outputs as inputs to the control function
 %   'u' to compute the control inputs at each time step.
-% 
+%
 %   When no outputs are specified, EFFORT plots the output.
 
 p = inputParser;
@@ -47,7 +47,7 @@ T = sym('t');
 
 [ts, ys] = nlsim(sys, u, varargin{:});
 
-[tx, ~, ~, ~] = varsub(sys);
+tx = subvars(sys);
 Ufun = symfun(subs(u, sys.states, tx), [T; tx]);
 
 odefun = matlabFunction(Ufun, 'Vars', {T, tx});
@@ -63,12 +63,12 @@ if nargout ~= 0
 else
     ax = gca;
     current_state = ax.NextPlot;
-    
+
     for k = 1:numel(x0)
         ax.NextPlot = 'add';
         plot(t{k}, us{k})
     end
-    
+
     ax.NextPlot = current_state;
     ax.XLimMode = 'auto';
     ax.YLimMode = 'auto';
@@ -77,4 +77,3 @@ else
 end
 
 end
-

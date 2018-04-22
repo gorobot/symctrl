@@ -1,6 +1,8 @@
 function D = getsymdiff(expr)
 %GETSYMDIFF Finds all symbolic derivatives in expression.
 
+validateattributes(expr, {'sym'}, {'nonempty'});
+
 if ~has(expr, 'diff')
     D = sym.empty;
     return;

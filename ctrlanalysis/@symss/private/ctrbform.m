@@ -1,24 +1,24 @@
-function T = ctrbform(sys)
+function sys = ctrbform(sys)
 %CTRBFORM Controllable canonical form.
-%   
+%
 %   T = CTRBFORM(sys) converts a state space system to controllable
 %   canonical form.
-% 
+%
 %   The transfer function defined by:
-% 
+%
 %   Y(s)   b0*s^(n) + b1*s^(n-1) + ... + bn
 %   ---- = --------------------------------
 %   U(s)       s^(n) + a1*s^(n-1) + an
-% 
+%
 %   Converts to the state space representation:
-% 
+%
 %   .   |  0   1   0  |    | 0 |
 %   x = |  0   0   1  |x + | 0 |u
 %       | -a3 -a2 -a1 |    | 1 |
-%   
+%
 %   y = | b3-a3*b0 b2-a2*b0 b1-a1*b0 |x + b0*u
 
-[A, B, C, D] = getabcd(sys);
+[A, B, C, D] = sys.getabcd();
 
 % Get the number of inputs from the B matrix size.
 m = size(B, 2);
@@ -92,9 +92,7 @@ A = P*A/P;
 B = P*B;
 C = C/P;
 
-T = sys;
-T.f = A*T.states + B*T.inputs;
-T.g = C*T.states + D*T.inputs;
+sys.f = A*sys.states + B*sys.inputs;
+sys.g = C*sys.states + D*sys.inputs;
 
 end
-

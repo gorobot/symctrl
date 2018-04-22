@@ -1,6 +1,5 @@
 %% Pendulum (No Friction)
 % Pendulum equation.
-clear, clc, close all, reset(symengine)
 
 syms x1 x2
 sys = symss;

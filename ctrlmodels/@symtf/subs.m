@@ -1,12 +1,10 @@
-function H = subs(G, varargin)
+function G = subs(G, varargin)
 %SUBS Replace a symbolic variable in state space.
 %   
 %   sys = SUBS(sys, ...) utility wrapper for 'subs' function.
 
-H = G;
-
-H.Numerator = subs(H.Numerator, varargin{:});
-H.Denominator = subs(H.Denominator, varargin{:});
+G.Numerator = subs(G.Numerator, varargin{:});
+G.Denominator = subs(G.Denominator, varargin{:});
 
 end
 

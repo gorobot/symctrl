@@ -1,40 +1,40 @@
 function S = slide(sys, varargin)
 %SLIDE Computes a sliding surface for a system.
-%   
+%
 %   S = SLIDE(sys, ...) computes an optimal sliding surface for a system
 %   using quadratic minimaztion techniques. The function returns a matrix S
 %   which satisfies the equation:
-% 
+%
 %   sigma = Sx
-%   
+%
 %   S = SLIDE(sys, Q, L) computes an optimal sliding surface using the
-%   matrices Q and L. 
-% 
+%   matrices Q and L.
+%
 %   Q is a matrix specified for the optimal performance measure and L is a
 %   weighting matrix for the equation:
 %            -1
 %   S2 = L*B2
-% 
+%
 %   S = S2[M I(mxm)]Tr
-% 
+%
 %   If omitted, Q defaults to the identity matrix (nxn), and L defaults to
 %   the identity matrix (mxm).
-% 
+%
 %   See also symss/slidectrl
 
 % References:
 % Shtessel, Yuri, et al. Sliding mode control and observation. Vol. 10. New
-% York: Birkhäuser, 2014.
-% 
+% York: Birkhï¿½user, 2014.
+%
 % Edwards, Christopher. Sliding mode schemes using output information with
 % application to heating plant problems. Diss. Engineering, 1995.
-% 
+%
 % Ghaffari, Azad, and Mohammad Javad Yazdanpanah. "Computing optimized
 % nonlinear sliding surfaces." Control and Decision Conference, 2008. CCDC
 % 2008. Chinese. IEEE, 2008.
 
 p = inputParser;
-[A, B, ~, ~] = getabcd(sys);
+[A, B] = sys.getabcd();
 addRequired(p, 'sys', @(S) validatesystem(S, {'hasinputs'}));
 addOptional(p, 'Q', eye(size(A)));
 addOptional(p, 'L', sym.empty);
@@ -82,4 +82,3 @@ end
 S = S2*[M, eye(m)]*Tr;
 
 end
-
