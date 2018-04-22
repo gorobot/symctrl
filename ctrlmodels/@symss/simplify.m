@@ -1,27 +1,17 @@
 function sys = simplify(sys, varargin)
-%SIMPLIFY Simplify a system using assumptions.
+%SIMPLIFY Simplify a state space model.
 %
 %   sys = SIMPLIFY(sys, ...)
+%   simplifies the state and output equations for a state space model.
+%   Extra parameters are passed to the internal sym/simplify calls.
 %   
-%   Uses assumptions defined in the workspace to simplify a state space
-%   system. 
-p = inputParser;
+%   Used to apply assumptions defined in the workspace to a state space
+%   model. Does not apply assumptions that affect state variables or input
+%   variables.
+% 
+%   See also sym/simplify
 
-validateSys = @(sys) isa(sys, 'symss');
-addRequired(p, 'sys', validateSys);
-
-validateSteps = @(Steps) validateattributes(Steps, {'numeric'}, {'positive', 'integer'});
-addParameter(p, 'Steps', 1, validateSteps);
-
-parse(p, sys, varargin{:});
-
-sys = p.Results.sys;
-Steps = p.Results.Steps;
-
-% Apply the assumptions to the state matrices.
-sys.A = simplify(sys.A, 'Steps', Steps);
-sys.B = simplify(sys.B, 'Steps', Steps);
-sys.C = simplify(sys.C, 'Steps', Steps);
-sys.D = simplify(sys.D, 'Steps', Steps);
+sys.f = simplify(sys.f, varargin{:});
+sys.g = simplify(sys.g, varargin{:});
 
 end

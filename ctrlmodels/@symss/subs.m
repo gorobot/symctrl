@@ -1,22 +1,21 @@
-function sys = subs(sys, old, new)
-%SUBS Replace a symbolic variable in state space.
-%   Detailed explanation goes here
+function sys = subs(sys, varargin)
+%SUBS Replace symbolic variables in state space model.
+%   
+%   sys = SUBS(sys, ...) replaces symbolic variables, state variables, or
+%   input variables in the state equations of a state space model.
+%   
+%   Use this method instead of symss/simplify to replace state variables
+%   and input variables in the state equations.
+% 
+%   sys = SUBS(sys, new) replaces symbolic variables, state variables, or
+%   input variables in the state space model.
+%   
+%   sys = SUBS(sys, old, new) replaces symbolic variables, state variables,
+%   input variables, or symbolic functions in the state equations.
+% 
+%   See also symss/simplify, sym/subs
 
-p = inputParser;
-validateSys = @(sys) isa(sys, 'symss');
-addRequired(p, 'sys', validateSys);
-addRequired(p, 'old');
-addRequired(p, 'new');
-
-parse(p, sys, old, new);
-
-sys = p.Results.sys;
-old = p.Results.old;
-new = p.Results.new;
-
-sys.A = subs(sys.A, old, new);
-sys.B = subs(sys.B, old, new);
-sys.C = subs(sys.C, old, new);
-sys.D = subs(sys.D, old, new);
+sys.f = subs(sys.f, varargin{:});
+sys.g = subs(sys.g, varargin{:});
 
 end
