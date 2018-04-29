@@ -195,6 +195,7 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
 
         function obj = set.Ts(obj, varargin)
             % Set sampling time Ts.
+            validateattributes(varargin{:}, {'numeric'}, {'nonnegative'});
             obj.Ts_ = varargin{1};
         end
 

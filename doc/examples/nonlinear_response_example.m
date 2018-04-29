@@ -13,15 +13,15 @@ tspan = [0 10];
 ic = {[1 0], [3 0], [pi 0]};
 
 figure
-nlsim(sys, tspan, ic, 'Vars', {x1})
+nlsim(sys, 0, tspan, ic, 'Vars', {x1})
 
 %% Plot the Response of Two Variables
 figure
-nlsim2(sys, tspan, ic, 'Vars', {x1, x2});
+nlsim2(sys, 0, tspan, ic, 'Vars', {x1, x2});
 
 %% Limit Cycles
 sys.f(2) = -10*sin(x1);
 
 figure
-nlsim2(sys, tspan, ic, 'vars', {x1, x2},...
-    'trajectory', 'on', 'solver', @ode15s);
+nlsim2(sys, 0, tspan, ic, 'vars', {x1, x2},...
+    'Trajectory', true, 'Solver', @ode15s);

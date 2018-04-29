@@ -70,8 +70,8 @@ classdef (SupportExtensionMethods = true) symhyss < symss
         guard
 
         % Adjacency Matrix
-        % The elements of the adjacency matrix represent the probability of
-        % switching to another mode.
+        % The elements of the adjacency matrix represent the availability
+        % of switching to another mode.
         edge
     end
 

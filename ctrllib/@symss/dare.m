@@ -22,7 +22,7 @@ validateMatrix = @(M) ...
                        {'square', 'nonnegative', 'size', size(A)});
 addRequired(p, 'sys');
 addOptional(p, 'Q', eye(size(A)));
-addOptional(p, 'R', eye(size(A)));
+addOptional(p, 'R', eye(min(size(B))));
 addParameter(p, 'exact', false);
 parse(p, sys, varargin{:});
 

@@ -28,7 +28,7 @@ for v = [k, t]
     end
 end
 
-if ismember(v, {k}) || ~isempty(sys.Ts)
+if ismember(v, {k}) || (~isempty(sys.Ts) && sys.Ts ~= 0)
     S.Type = ['D', S.Type];
 end
 

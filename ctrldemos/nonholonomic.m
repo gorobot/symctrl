@@ -1,6 +1,6 @@
 %% Nonholonomic Differential Drive System
 % Nonholonomic differential drive system, with constants.
-
+%
 % d - the distance between the wheels.
 syms x1 x2 x3 u1 u2 d
 

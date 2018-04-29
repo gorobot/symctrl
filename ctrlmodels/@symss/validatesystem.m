@@ -45,6 +45,8 @@ for k = 1:numel(attributes)
             va_(sys.B, S, {'nonempty'}, mf_, 'input matrix');
         case 'hasoutput'
             va_(sys.C, S, {'nonempty'}, mf_, 'output matrix');
+        case 'continuous'
+            va_(sys.Ts, N, {'<=', 0}, mf_, 'sampling time');
         case 'discrete'
             va_(sys.Ts, N, {'nonempty', 'positive'}, mf_, 'sampling time');
         case 'SISO'
