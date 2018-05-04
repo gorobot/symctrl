@@ -12,13 +12,7 @@ parse(p, f, rg);
 
 syms t
 Ffun = symfun(formula(f), t);
-ts = Ffun(rg);
-
-if length(ts) > 1
-    for k = 1:numel(ts)
-        ts(k) = {double(ts{k})};
-    end
-end
+ts = double(Ffun(rg));
 
 end
 

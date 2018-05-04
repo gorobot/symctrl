@@ -1,18 +1,13 @@
-function y = linsolver(sys, u, varargin)
-%LINSOLVER Internal linear function solver. 
+function y = linsolver(sys, u, tspan, x0, varargin)
+%LINSOLVER Internal linear function solver.
 %   Detailed explanation goes here
 
 p = inputParser;
-validateInput = @(U) ...
-    validateattributes(U, {'sym', 'numeric', 'function_handle'}, ...
-                          {'nonempty'});
-validateTspan = @(tspan) ...
-    validateattributes(tspan, {'numeric', 'increasing'}, {'row'});
 addRequired(p, 'sys');
-addOptional(p, 'u', sym.empty, validateInput);
-addOptional(p, 'tspan', [0 5], validateTspan);
-addOptional(p, 'x0', []);
-parse(p, sys, u, varargin{:});
+addRequired(p, 'u');
+addRequired(p, 'tspan');
+addRequired(p, 'x0');
+parse(p, sys, u, tspan, x0, varargin{:});
 
 u = p.Results.u;
 
@@ -32,11 +27,11 @@ if isa(u, 'sym')
     end
 
     iL = ilaplace(Y, s, t);
-    y = subs(iL, sys.states, x0);
+    y = iL;
 else
     yi = tzir(sys, x0);
     ys = tzsr(sys, u);
-    
+
     if ~isempty(ys)
         y = yi + ys;
     else
@@ -44,6 +39,4 @@ else
     end
 end
 
-
 end
-

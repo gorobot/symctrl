@@ -3,35 +3,34 @@ function varargout = reach(sys, X, varargin)
 %
 %   R = REACH(sys, X) computes the backward-reachable region for a state X.
 %
-%   [R, S] = REACH(sys, X, ...) computes the backward-reachable region for
-%   a state X, and also returns the points surrounding the final set, S,
-%   denoting the region where the system will reach X in Tf seconds.
+%   [R, S] = REACH(sys, X, ...) computes the backward-reachable region for a
+%   state X, and also returns the points surrounding the final set, S, denoting
+%   the region where the system will reach X in Tf seconds.
 %
-%   REACH(____) if no output is specified, the function will plot the
-%   region.
+%   REACH(____) if no output is specified, the function will plot the region.
 %
 %   The function creates a ring of points around the state X and performs
 %   gradient ascent along the function trajectories in order to find the
 %   boundary of a shape that gives the backward-reachable region of initial
 %   conditions that will allow a system to reach the desired state.
 %
-%   Use BOUNDARY or CONVHULL in conjunction with INPOLYGON to estimate
-%   whether an initial condition is within the backward-reachable region.
+%   Use BOUNDARY or CONVHULL in conjunction with INPOLYGON to estimate whether
+%   an initial condition is within the backward-reachable region.
 %
 %   Parameters:
 %       Points - specify the number of points in the ring (default 20).
 %       Ts - specify the sample time (default 1E-3).
 %       Tf - specify the final time (default 10).
-%       ZeroSpacing - The radial distance of the ring from the target
-%           point, X (default 1E-3).
+%       ZeroSpacing - The radial distance of the ring from the target point, X
+%           (default 1E-3).
 %       ComputationTime - The maximum computation time of the function, in
 %           seconds (default 30).
 %
 %   Tips:
-%       The approximated region is more accurate when the sampling time
-%       Ts is small. However, a smaller sampling time can lead to long
-%       computation times for the function. Try using a relaxed function
-%       first, before decreasing the sampling time.
+%       The approximated region is more accurate when the sampling time Ts is
+%       small. However, a smaller sampling time can lead to long computation
+%       times for the function. Try using a relaxed function first, before
+%       decreasing the sampling time.
 %
 %   See also symss/elroa
 

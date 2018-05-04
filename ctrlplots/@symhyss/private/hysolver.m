@@ -1,21 +1,14 @@
-function [t, y] = hysolver(sys, u, varargin)
+function [t, y] = hysolver(sys, u, tspan, x0, varargin)
 %HYSOLVER Internal hybrid function solver.
-%   Detailed explanation goes here
 
 p = inputParser;
-validateInput = @(U) ...
-    validateattributes(U, {'sym', 'numeric', 'function_handle'}, ...
-                          {'nonempty'});
-validateTspan = @(tspan) ...
-    validateattributes(tspan, {'numeric', 'increasing'}, {'row'});
-validateSolver = @(solver) ...
-    validateattributes(solver, {'function_handle'}, {'nonempty'});
 addRequired(p, 'sys');
-addOptional(p, 'u', sym.empty, validateInput);
-addOptional(p, 'tspan', [0 5], validateTspan);
-addOptional(p, 'x0', []);
-addParameter(p, 'Solver', @ode45, validateSolver);
-parse(p, sys, u, varargin{:});
+addRequired(p, 'u');
+addRequired(p, 'tspan');
+addRequired(p, 'x0');
+addOptional(p, 'options', struct([]));
+addParameter(p, 'Solver', @ode45);
+parse(p, sys, u, tspan, x0, varargin{:});
 
 T = sym('t');
 

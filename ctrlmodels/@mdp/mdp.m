@@ -166,7 +166,7 @@ classdef (SupportExtensionMethods = true) mdp < handle
         function set.policy(obj, policy)
             % Set the policy for the MDP.
             if ~isscalar(policy)
-                szX = length(obj.X_);
+                szX = numel(obj.X_);
                 szU = length(obj.U_);
                 validateattributes(policy, {'numeric'}, ...
                                    {'size', [szX, szU]});
@@ -250,4 +250,55 @@ classdef (SupportExtensionMethods = true) mdp < handle
             end
         end
     end
+
+    % Overloaded subsref & subsasgn.
+%     methods
+%         function varargout = subsref(obj, S)
+%             if strcmp(S(1).type, '.') && strcmp(S(1).subs, 'P')
+%                 if numel(S) == 1
+%                     error('Not enough input arguments.');
+%                 end
+%                 
+%                 idx = S(2).subs;
+%                 varargout = {privGetF(obj, idx)};
+%                 
+%             elseif strcmp(S(1).type, '.') && strcmp(S(1).subs, 'R')
+%                 if numel(S) == 1
+%                     error('Not enough input arguments.');
+%                 end
+%                 
+%                 idx = S(2).subs;
+%                 varargout = {privGetA(obj, idx)};
+% 
+%             else
+%                 [varargout{1:nargout}] = builtin('subsref', obj, S);
+%             end
+%         end
+% 
+%         function obj = subsasgn(obj, S, varargin)
+%             if strcmp(S(1).type, '.') && strcmp(S(1).subs, 'P')
+%                 if numel(S) > 1
+%                     idx = S(2).subs;
+%                 else
+%                     % Reject assignment to entire cell.
+%                     error('Not enough input arguments.');
+%                 end
+%                 
+%                 obj = privSetF(obj, idx, varargin{:});
+%                 
+%             elseif strcmp(S(1).type, '.') && strcmp(S(1).subs, 'R')
+%                 if numel(S) > 1
+%                     idx = S(2).subs;
+%                 else
+%                     % Reject assignment to entire cell.
+%                     error('Not enough input arguments.');
+%                 end
+%                 
+%                 obj = privSetF(obj, idx, varargin{:});
+%                 
+%             else
+%                 obj = builtin('subsasgn', obj, S, varargin{:});
+%             end
+%         end
+%     end
 end

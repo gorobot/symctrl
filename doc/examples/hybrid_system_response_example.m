@@ -31,5 +31,5 @@ ic = {15, 20, 25};
 
 %%
 % Simulate the hybrid system using the initial conditions.
-hysim(sys, sym(0), tspan, ic);
+hysim(sys, 0, tspan, ic);
 

@@ -1,19 +1,18 @@
 function [T, rhp, lhp] = rhtable(G, varargin)
 %RHTABLE Generates a Routh-Hurwitz table for stability analysis.
 % 
-%   [T, rhp, lhp] = RHTABLE(G) computes the Routh-Hurwitz table(s) for a
-%   given system. It returns the tables as 'T', as well as the number of
-%   poles in the right-half plane equal to the number of sign changes in
-%   the first column of the table in 'rhp' and the number of poles in the
-%   left hand plane 'lhp'. If no output is specified, the table is
-%   displayed to the command window.
+%   [T, rhp, lhp] = RHTABLE(G) computes the Routh-Hurwitz table(s) for a given
+%   system. It returns the tables as 'T', as well as the number of poles in the
+%   right-half plane equal to the number of sign changes in the first column of
+%   the table in 'rhp' and the number of poles in the left hand plane 'lhp'. If
+%   no output is specified, the table is displayed to the command window.
 % 
-%   NOTE: If the transfer function 'G' contains undefined symbolic
-%   variables, the number of poles in the right-hand plane may not be
-%   correct. The function uses XOR and ISALWAYS to evaluate sign changes in
-%   the first column of the R-H table. For numerical symbolic values, this
-%   achieves the correct number of poles in the right-hand plane. For
-%   symbolic variables, this is not guaranteed to work.
+%   NOTE: If the transfer function 'G' contains undefined symbolic variables,
+%   the number of poles in the right-hand plane may not be correct. The function
+%   uses XOR and ISALWAYS to evaluate sign changes in the first column of the
+%   R-H table. For numerical symbolic values, this achieves the correct number
+%   of poles in the right-hand plane. For symbolic variables, this is not
+%   guaranteed to work.
 
 p = inputParser;
 addRequired(p, 'G');

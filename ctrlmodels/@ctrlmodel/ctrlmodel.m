@@ -1,10 +1,17 @@
-classdef (Abstract) ctrlmodel < handle
+classdef (Abstract) ctrlmodel < handle & matlab.mixin.Copyable
     %CTRLMODEL Abstract superclass for system models.
-    
+
     % Abstract methods.
     methods (Abstract)
         subs(obj)
         simplify(obj)
     end
-end
 
+    % % Protected Methods
+    % methods (Access = protected)
+    %     function T = copy(obj) {
+    %         T = ctrlmodel;
+    %
+    %     }
+    % end
+end

@@ -1,8 +1,7 @@
 function varargout = reduce(varargin)
 %REDUCE Reduce a symbolic expression to a numeric expression.
 %   
-%   REDUCE(...) reduces a symbolic expression to a numeric expression using
-%   VPA. 
+%   REDUCE(...) reduces a symbolic expression to a numeric expression using VPA.
 
 varargout = cell(nargin);
 

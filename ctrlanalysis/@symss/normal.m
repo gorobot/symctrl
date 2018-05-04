@@ -1,8 +1,7 @@
 function sys = normal(sys, varargin)
 %NORMAL Transform a state space system into a normal form.
 %   
-%   T = NORMAL(sys, ...) converts a state space representation to a normal
-%   form.
+%   T = NORMAL(sys, ...) converts a state space representation to a normal form.
 % 
 %   T = NORMAL(sys, 'Type', t)
 % 

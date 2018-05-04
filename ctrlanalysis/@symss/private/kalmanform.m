@@ -5,9 +5,8 @@ function sys = kalmanform(sys)
 %   decomposition.
 
 %   References:
-%   R. E. Kalman, "On the Computation of the Reachable/Observable
-%   Canonical Form," SIAM J. Control and Optimization, Vol. 20, No. 2,
-%   pp. 258-260, 1982
+%   R. E. Kalman, "On the Computation of the Reachable/Observable Canonical
+%   Form," SIAM J. Control and Optimization, Vol. 20, No. 2, pp. 258-260, 1982
 %
 %   Dahleh, Mohammed, Munther A. Dahleh, and George Verghese. "Lectures on
 %   dynamic systems and control." A+ A 4.100 (2004): 1-100.

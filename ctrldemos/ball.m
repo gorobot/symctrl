@@ -1,8 +1,7 @@
 %% Bouncing Ball
 % The bouncing ball is a canonical hybrid switching model with 2 modes. The
-% first mode is a continuous "flow" mode, where the ball is in free-fall.
-% The second is a discontinuous "jump" mode, where the ball contacts the
-% ground.
+% first mode is a continuous "flow" mode, where the ball is in free-fall. The
+% second is a discontinuous "jump" mode, where the ball contacts the ground.
 %
 % Model:
 %

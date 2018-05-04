@@ -29,3 +29,17 @@ initial(sys|{l==1, k==1}, tspan, {[pi, 0]});
 initial(sys|{l==1, k==2}, tspan, {[pi, 0]});
 initial(sys|{l==1, k==3}, tspan, {[pi, 0]});
 hold off
+
+%% Plot Time-Series Data
+% We can also simulate a system to obtain an output function over all time
+% given an arbitrary input. In our case, we can choose our input to be a
+% step function.
+syms s
+u = -10*exp(-2*s)/s + 5*exp(-4*s)/s - 2.5*exp(-6*s)/s + exp(-8*s)/s;
+y = lsim(sys|{l==1, k==1}, u, tspan, {[pi, 0]});
+
+%%
+% Plot time-series data for the output using a new time span. 
+rg = 0:0.01:10;
+ts = gettsdata(y{1}, rg);
+plottsdata(ts, rg);

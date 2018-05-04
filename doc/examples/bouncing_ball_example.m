@@ -11,7 +11,7 @@ sys = subs(sys, [g, k], [9.81, 0.8]);
 tspan = [0 10];
 ic = {[5, 5]};
 
-[t, y] = hysim(sys, sym(0), tspan, ic);
+[t, y] = hysim(sys, 0, tspan, ic);
 
 t = t{:};
 y = y{:};

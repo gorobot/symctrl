@@ -1,22 +1,22 @@
 function R = roa(sys, varargin)
 %ROA Calculate region of attraction for a nonlinear system.
 %
-%   R = ROA(sys) calculates the region of attraction for a state space
-%   system using the Lyapunov function derived from the Lyapunov equation.
+%   R = ROA(sys) calculates the region of attraction for a state space system
+%   using the Lyapunov function derived from the Lyapunov equation.
 %
-%   R = ROA(sys, V) calculates the region of attraction for a state space
-%   model using a given Lyapunov equation.
-%
-%   ROA(____) plots the region of attraction for a state space model
+%   R = ROA(sys, V) calculates the region of attraction for a state space model
 %   using a given Lyapunov equation.
 %
+%   ROA(____) plots the region of attraction for a state space model using a
+%   given Lyapunov equation.
+%
 %   Methodology:
-%   To calculate the region of attraction, the function performs the
-%   following actions:
+%   To calculate the region of attraction, the function performs the following
+%   actions:
 %
 %   1. Compute a lyapunov function using the linearized system.
-%   2. Calculate the derivative of the Lyapunov function using the
-%      nonlinear dynamics.
+%   2. Calculate the derivative of the Lyapunov function using the nonlinear
+%      dynamics.
 %   3. Obtain solutions for:
 %       .
 %       V = 0

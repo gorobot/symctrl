@@ -1,8 +1,7 @@
 function sys = jordanform(sys)
 %JORDANFORM Jordan canonical form.
 %
-%   T = JORDANFORM(sys) converts a state space model to Jordan
-%   canonical form.
+%   T = JORDANFORM(sys) converts a state space model to Jordan canonical form.
 
 % Get the matrix of eigenvectors.
 [A, B, C, D] = sys.getabcd();

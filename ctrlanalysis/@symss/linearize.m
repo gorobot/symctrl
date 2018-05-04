@@ -1,11 +1,14 @@
 function sys = linearize(sys, varargin)
 %LINEARIZE Linearize a system around an equilibrium point.
 %
-%   T = LINEARIZE(sys) linearizes a system around an equilibrium point. If
-%   no point is specified, the system is linearized around f(x) = 0.
+%   T = LINEARIZE(sys) linearizes a system around an equilibrium point. If no
+%   point is specified, the system is linearized around f(x) = 0.
 %
 %   T = LINEARIZE(sys, eq) linearizes a system around the equilibrium point
-%   defined by eq. For instance, T = LINEARIZE(sys, [x1(0), x2(0)]).
+%   defined by eq.
+% 
+%   For example, 
+%       T = LINEARIZE(sys, [x1(0), x2(0)]).
 
 p = inputParser;
 sz = size([sys.states; sys.inputs]);

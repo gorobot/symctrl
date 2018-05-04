@@ -11,7 +11,7 @@ function varargout = dspace(m, sys, blocks, varargin)
 %   for use with an MDP and also returns a symbolic matrix of inequalities
 %   and an indexing function, which can be used to determine the current
 %   partition the state is currently in.
-% 
+%
 %   If no output is specified, the function updates X in the mdp object.
 %
 %   For example, discretizing a 2-D state space using the following
@@ -55,7 +55,7 @@ function varargout = dspace(m, sys, blocks, varargin)
 %       syms x1 x2
 %       sys = symss
 %       sys.states = [x1, x2]
-%       
+%
 %       m = mdp
 %       [X, in, Xf] = DSPACE(m, {[0, 3, 8, 10], [0, 2, 5]})
 %       [x1, x2] = ind2sub(size(X), Xf(5, 2))
@@ -124,13 +124,13 @@ end
 if nargout ~= 0
     % Return the indices of the discretized space.
     varargout{1} = X;
-    
+
     if nargout > 1
         varargout{2} = in;
 
         % Create helper function.
         Xf = symfun(in, sys.states);
-        Xf = @(varargin) find(isAlways(Xf(varargin{:})));
+        Xf = @(varargin) find(isAlways(Xf(varargin{:})), 1);
 
         varargout{3} = Xf;
     end

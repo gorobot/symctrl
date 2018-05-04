@@ -1,8 +1,8 @@
 function sys = obsvform(sys)
 %OBSVFORM Observable canonical form.
 %   
-%   T = OBSVFORM(sys) converts a state space system to observable
-%   canonical form.
+%   T = OBSVFORM(sys) converts a state space system to observable canonical
+%   form.
 % 
 %   The transfer function defined by:
 % 
@@ -31,9 +31,8 @@ p = size(C, 1);
 % Compute the observability matrix.
 Ob = obsv(sys);
 
-% If the system is not fully observable, we can determine the
-% unobservable states and compute the canonical form from the
-% states which are in Ao.
+% If the system is not fully observable, we can determine the unobservable
+% states and compute the canonical form from the states which are in Ao.
 if length(A) > rank(Ob)
     warning('System has uncontrollable states.')
 end
@@ -91,14 +90,13 @@ else % Multiple output case (p > 1)
     end
 end
 
-% Compute the similarity transformations using P. This is
-% equivalent to the command:
+% Compute the similarity transformations using P. This is equivalent to the
+% command:
 % 
 % sys = sys*inv(Q);
 % 
-% However, it can be computationally intensive to compute the
-% inverse of Q, so we compute the similarity transformation here
-% rather than using 'simtrans'.
+% However, it can be computationally intensive to compute the inverse of Q, so
+% we compute the similarity transformation here rather than using 'simtrans'.
 A = Q\A*Q;
 B = Q\B;
 C = C*Q;

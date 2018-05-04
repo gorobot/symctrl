@@ -68,7 +68,7 @@ Code contributions should include:
 * Well-formatted code.
 * Unit tests for the change.
 
-Code contributions can address any of the areas of interest. For code contributions that do not address one of the areas of interest, a suggestion should be submitted prior to submitting a pull request, giving the community time to gauge whether of not the feature is a good fit for the toolbox as a whole.
+Code contributions can address any of the areas of interest. For code contributions that do not address one of the areas of interest, a suggestion should be submitted prior to submitting a pull request, giving the community time to gauge whether or not the feature is a good fit for the toolbox as a whole.
 
 Pull requests should include a relevant issue in the description if they are in response to an issue.
 

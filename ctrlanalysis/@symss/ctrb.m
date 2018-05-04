@@ -8,8 +8,8 @@ function Co = ctrb(sys)
 %   See also ctrbs
 
 %   References:
-%   Antsaklis, Panos J., and Anthony N. Michel. A linear systems primer.
-%   Vol. 1. Boston: Birkh�user, 2007.
+%   Antsaklis, Panos J., and Anthony N. Michel. A linear systems primer. Vol. 1.
+%   Boston: Birkh�user, 2007.
 
 p = inputParser;
 addRequired(p, 'sys', @(S) validatesystem(S, {'hasinput'}));

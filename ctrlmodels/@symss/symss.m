@@ -1,38 +1,37 @@
 classdef (SupportExtensionMethods = true) symss < ctrlmodel
-    %SYMSS Construct symbolic state-space model or convert model to
-    %symbolic state-space.
+    %SYMSS Construct symbolic state-space model or convert model to symbolic
+    %state-space.
     %
     %   sys = SYMSS creates an empty state-space representation.
     %
-    %   A state-space model is defined by state equations and
-    %   output equations, given by:
+    %   A state-space model is defined by state equations and output equations,
+    %   given by:
     %
     %       dx/dt = f(t, x, u)
     %           y = g(t, x, u)
     %
-    %   In order to define a state-space model, begin with an empty state
-    %   space model, define states and inputs, and then define state
-    %   equations and output equations.
+    %   In order to define a state-space model, begin with an empty state space
+    %   model, define states and inputs, and then define state equations and
+    %   output equations.
     %
-    %   sys = SYMSS(A, B, C, D)
-    %   Creates a state space model using the matrices A, B, C, D.
+    %   sys = SYMSS(A, B, C, D) Creates a state space model using the matrices
+    %   A, B, C, D.
     %
     %       dx/dt = Ax(t) + Bx(t)
     %        y(t) = Cx(t) + Du(t)
     %
-    %   A must be an nxn matrix, B must be an nxm matrix, and C
-    %   must be a pxn matrix. If D is specified, it must be a pxm
-    %   matrix.
+    %   A must be an nxn matrix, B must be an nxm matrix, and C must be a pxn
+    %   matrix. If D is specified, it must be a pxm matrix.
     %
-    %   sys = SYMSS(states, inputs) creates a state space model
-    %   using the state variables and input variables provided.
+    %   sys = SYMSS(states, inputs) creates a state space model using the state
+    %   variables and input variables provided.
     %
-    %   sys = SYMSS(Ts) creates a discrete state space model with sampling
-    %   time Ts.
+    %   sys = SYMSS(Ts) creates a discrete state space model with sampling time
+    %   Ts.
 
     %   References:
     %   Antsaklis, Panos J., and Anthony N. Michel. A linear systems
-    %   primer. Vol. 1. Boston: Birkh�user, 2007.
+    %   primer. Vol. 1. Boston: Birkhauser, 2007.
 
     % State equations.
     properties (Dependent)
@@ -149,6 +148,14 @@ classdef (SupportExtensionMethods = true) symss < ctrlmodel
             if nout > 1, varargout{2} = obj.B; end
             if nout > 2, varargout{3} = obj.C; end
             if nout > 3, varargout{4} = obj.D; end
+        end
+        
+        function varargout = dim(obj)
+            %DIM Helper function to return state space dimensions.
+            nout = nargout;
+            varargout{1} = size(obj.A, 1);
+            if nout > 1, varargout{2} = size(obj.B, 2); end
+            if nout > 2, varargout{3} = size(obj.C, 1); end
         end
     end
 

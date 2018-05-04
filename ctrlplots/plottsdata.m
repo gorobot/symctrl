@@ -6,7 +6,7 @@ p = inputParser;
 validateTsData = @(T) ...
     validateattributes(T, {'numeric'}, {'ncols', size(rg, 2)});
 validateRange = @(R) ...
-    validateattributes(R, {'numeric'}, {'row', 'positive', 'increasing'});
+    validateattributes(R, {'numeric'}, {'row', 'nonnegative', 'increasing'});
 addRequired(p, 'ts', validateTsData);
 addRequired(p, 'rg', validateRange);
 parse(p, ts, rg);

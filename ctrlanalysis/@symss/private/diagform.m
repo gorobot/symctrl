@@ -1,8 +1,7 @@
 function sys = diagform(sys)
 %DIAGFORM Diagonal canonical form.
 %   
-%   T = DIAGFORM(sys) converts a state space model to diagonal
-%   canonical form.
+%   T = DIAGFORM(sys) converts a state space model to diagonal canonical form.
 % 
 %   The transfer function defined by:
 % 

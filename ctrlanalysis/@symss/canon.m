@@ -1,8 +1,8 @@
 function sys = canon(sys, varargin)
 %CANON Transform a state space model into a canonical form.
 % 
-%   T = CANON(sys, ...) converts a state space representation to a
-%   canonical form via similarity transformation.
+%   T = CANON(sys, ...) converts a state space representation to a canonical
+%   form via similarity transformation.
 % 
 %   T = CANON(sys, 'Type', t)
 %   
@@ -15,8 +15,8 @@ function sys = canon(sys, varargin)
 %   See also symss/normal
 
 %   References:
-%   Antsaklis, Panos J., and Anthony N. Michel. A linear systems primer. 
-%   Vol. 1. Boston: Birkhäuser, 2007.
+%   Antsaklis, Panos J., and Anthony N. Michel. A linear systems primer. Vol. 1.
+%   Boston: Birkhäuser, 2007.
 
 p = inputParser;
 types = {'c', 'C', 'co', 'Co', 'controllable', 'companion', ...

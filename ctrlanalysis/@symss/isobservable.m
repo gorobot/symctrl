@@ -1,7 +1,7 @@
 function tf = isobservable(sys)
-%ISOBSERVABLE Uses the eigenvector test to determine if a system is
-%observable. It returns a logical 1 (true) if the system is observable and
-%a logical 0 (false) if it is not.
+%ISOBSERVABLE Uses the eigenvector test to determine if a system is observable.
+%It returns a logical 1 (true) if the system is observable and a logical 0
+%(false) if it is not.
 
 sys = symss(sys);
 [A, ~, C] = sys.getabcd();

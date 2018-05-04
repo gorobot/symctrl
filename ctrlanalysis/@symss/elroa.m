@@ -1,16 +1,15 @@
 function varargout = elroa(sys, varargin)
 %ELROA Elastic estimation of region of attraction.
 %
-%   R = ELROA(sys, ...) estimates the region of attraction around the
-%   origin using an elastic method.
+%   R = ELROA(sys, ...) estimates the region of attraction around the origin
+%   using an elastic method.
 %
-%   The function creates a ring of points around the origin and grows the
-%   points until they encompass the region of attraction. The boundary
-%   created by the points is an estimation of the region of attraction and
-%   is not exact.
+%   The function creates a ring of points around the origin and grows the points
+%   until they encompass the region of attraction. The boundary created by the
+%   points is an estimation of the region of attraction and is not exact.
 %
-%   Use BOUNDARY or CONVHULL in conjunction with INPOLYGON to estimate
-%   whether an initial condition is within the region of attraction.
+%   Use BOUNDARY or CONVHULL in conjunction with INPOLYGON to estimate whether
+%   an initial condition is within the region of attraction.
 %
 %   Example (For initial condition [1 1]):
 %       R = ELROA(sys)
@@ -30,25 +29,25 @@ function varargout = elroa(sys, varargin)
 %       Points - specify the number of points in the ring (default 20).
 %       T0 - specify the initial temperature (default 2).
 %       CoolingFactor - specify the cooling factor (default 1.02).
-%       ZeroSpacing - specify the radial distance of the ring from the
-%           origin (default 1E-3).
+%       ZeroSpacing - specify the radial distance of the ring from the origin
+%           (default 1E-3).
 %       ComputationTime - The maximum computation time of the function, in
 %           seconds (default 30).
-%       Radial - specify whether the points should move in a strictly
-%           radial direction, or if the points can move along the
-%           trajectories (default false).
+%       Radial - specify whether the points should move in a strictly radial
+%           direction, or if the points can move along the trajectories (default
+%           false).
 %
 %   Tips:
 %       The cooling factor is a positive number > 1. Small changes to the
-%       cooling factor can have a dramatic effect. Lower values produce
-%       less conservative results. It is recommended to change the cooling
-%       factor in increments of 1E-2 or 1E-3 if needed.
+%       cooling factor can have a dramatic effect. Lower values produce less
+%       conservative results. It is recommended to change the cooling factor in
+%       increments of 1E-2 or 1E-3 if needed.
 %
 %       If 'Radial' is set, the points move along the projection of the
-%       trajectory evaluated at the point with a radial vector from the
-%       origin to the point. This option can be useful if the points move
-%       too far down a limit cycle during computation, but can give points
-%       outside the region of attraction if the cooling factor is too high.
+%       trajectory evaluated at the point with a radial vector from the origin
+%       to the point. This option can be useful if the points move too far down
+%       a limit cycle during computation, but can give points outside the region
+%       of attraction if the cooling factor is too high.
 %
 %   See also boundary, convhull, inpolygon, symss/roa, symss/nlsim2
 
@@ -101,7 +100,8 @@ while true
         R(b, 1), R(b, 2));
 
     if radial
-        chg = (dot(PF(in, :), R(in, :) - 0, 1)/vecnorm(R(in, :) - 0, 2, 1).^2)*(R(in, :) - 0);
+        chg = (dot(PF(in, :), R(in, :) - 0, 1)/vecnorm(R(in, :) - ...
+                0, 2, 1).^2)*(R(in, :) - 0);
     else
         chg = PF(in, :);
     end

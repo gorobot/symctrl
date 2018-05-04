@@ -1,7 +1,10 @@
 %% Aircraft (6-DOF)
 % 6-DOF Aircraft Demo System
-
+% 
 % Constants
+% Jx - Inertia for x.
+% Jy - Inertia for y.
+% Jz - Inertia for z.
 syms Jx Jy Jz Jxz Mx My Mz T g m
 
 phi = sym('x1');

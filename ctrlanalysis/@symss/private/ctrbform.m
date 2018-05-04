@@ -1,8 +1,8 @@
 function sys = ctrbform(sys)
 %CTRBFORM Controllable canonical form.
 %
-%   T = CTRBFORM(sys) converts a state space system to controllable
-%   canonical form.
+%   T = CTRBFORM(sys) converts a state space system to controllable canonical
+%   form.
 %
 %   The transfer function defined by:
 %
@@ -26,9 +26,8 @@ m = size(B, 2);
 % Compute the controllability matrix.
 Co = ctrb(sys);
 
-% If the system is not fully controllable, we can determine the
-% uncontrollable states and compute the canonical form from the
-% states which are in Ac.
+% If the system is not fully controllable, we can determine the uncontrollable
+% states and compute the canonical form from the states which are in Ac.
 if length(A) > rank(Co)
     warning('System has uncontrollable states.')
 end

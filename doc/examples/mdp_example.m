@@ -31,7 +31,7 @@ m = mdp;
 % W X E
 %   S
 
-[X, in, Xf] = dspace(m, sys, {0:10, 0:10, pi/4:pi/2:9*pi/4});
+[X, in, Xf] = dspace(m, sys, {0:10, 0:10, -pi/4:pi/2:7*pi/4});
 
 %%
 % This discretization creates 400 possible states (10x10x4) for the
@@ -77,16 +77,16 @@ m.U{3} = [pi/4, -pi/4];
 
 pattern = zeros(3, 3, 3);
 
-pattern(:, :, 2) = [0, 0.9, 0; 0.05, NaN, 0.05; 0, 0, 0];
+pattern(:, :, 2) = [0, 0, 0; 0.05, NaN, 0.05; 0, 0.9, 0];
 propp(m, [NaN, NaN, 1], 1, pattern);
 
-pattern(:, :, 2) = [0, 0.05, 0; 0.9, NaN, 0; 0, 0.05, 0];
+pattern(:, :, 2) = [0, 0.05, 0; 0, NaN, 0.9; 0, 0.05, 0];
 propp(m, [NaN, NaN, 2], 1, pattern);
 
-pattern(:, :, 2) = [0, 0, 0; 0.05, NaN, 0.05; 0, 0.9, 0];
+pattern(:, :, 2) = [0, 0.9, 0; 0.05, NaN, 0.05; 0, 0, 0];
 propp(m, [NaN, NaN, 3], 1, pattern);
 
-pattern(:, :, 2) = [0, 0.05, 0; 0, NaN, 0.9; 0, 0.05, 0];
+pattern(:, :, 2) = [0, 0.05, 0; 0.9, NaN, 0; 0, 0.05, 0];
 propp(m, [NaN, NaN, 4], 1, pattern);
 
 %%
@@ -95,14 +95,14 @@ propp(m, [NaN, NaN, 4], 1, pattern);
 
 pattern = zeros(1, 1, 4);
 
-pattern(:, :, :) = [NaN; 1; 0; 0];
+pattern(:, :, :) = [NaN; 0.95; 0; 0];
 propp(m, [NaN, NaN, 1], 2, pattern);
 propp(m, [NaN, NaN, 2], 2, pattern);
 propp(m, [NaN, NaN, 3], 2, pattern);
-propp(m, [NaN, NaN, 4], 2, pattern);
+% propp(m, [NaN, NaN, 4], 2, pattern);
 
-pattern(:, :, :) = [0; 0; 1; NaN];
-propp(m, [NaN, NaN, 1], 3, pattern);
+pattern(:, :, :) = [0; 0; 0.95; NaN];
+% propp(m, [NaN, NaN, 1], 3, pattern);
 propp(m, [NaN, NaN, 2], 3, pattern);
 propp(m, [NaN, NaN, 3], 3, pattern);
 propp(m, [NaN, NaN, 4], 3, pattern);
@@ -129,7 +129,7 @@ propp(m, [NaN, NaN, 4], 3, pattern);
 
 pattern = zeros(2, 1, 2);
 pattern(:, :, 1) = [NaN; -100];
-propr(m, [9, NaN, 3], 1, pattern);
+propr(m, [9, NaN, 1], 1, pattern);
 
 %%
 % Next we define an object that we want to avoid. In this case, we define
@@ -161,7 +161,7 @@ propr2(m, [1, 10, NaN], 1, NaN, 'nanvalue', 100);
 % We will define another object close to the goal state that we want the
 % system to avoid.
 
-propr2(m, {2:3, 8:10, NaN}, 1, NaN, 'nanvalue', -10);
+propr2(m, {2:3, 8:10, NaN}, 1, NaN, 'nanvalue', -100);
 
 %%
 % Now, we should have a reward space that roughly resembles the following:
@@ -169,9 +169,9 @@ propr2(m, {2:3, 8:10, NaN}, 1, NaN, 'nanvalue', -10);
 %       +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
 %     1 |     |     |     |     |     |     |     |     |     | 100 |
 %       +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
-%     2 |     |     |     |     |     |     |     |     | -10 | -10 |
+%     2 |     |     |     |     |     |     |     |     | -100| -100|
 %       +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
-%     3 |     |     |     |     |  -2 |     |     |     | -10 | -10 |
+%     3 |     |     |     |     |  -2 |     |     |     | -100| -100|
 %       +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
 %     4 |     |     |     |  -2 |  -5 |  -2 |     |     |     |     |
 %       +-----+-----+-----+-----+-----+-----+-----+-----+-----+-----+
@@ -197,4 +197,61 @@ propr2(m, {2:3, 8:10, NaN}, 1, NaN, 'nanvalue', -10);
 % is within (0, 1]. The closer to 1 the value is, the further ahead the
 % system looks. For this example, we set the discount factor to 0.95.
 
-m.gamma = 0.95;
+m.gamma = 0.8;
+
+%% Perform Policy Iteration
+%
+[Vi, pol, a] = itervalue(m, 10000);
+
+m.policy = pol;
+
+%% Simulate the Policy
+% Because our system is a continuous system, we need to specify a function that
+% will determine which state the system is currently in at any given time.
+%
+% For example, if the robot moves from state 1 to state 2, we need a way of
+% determining where the robot is in the discretized state space. This is
+% because the continuous dynamics may place the robot anywhere within 1, so
+% when it takes an action to move to 2, the same control action may result in
+% the robot reaching different states. We need a way of determining whether it
+% made it to 2 or overshoots into 3 or goes into some other state.
+%
+%                    1             2             3
+%              +-------------+-------------+-------------+
+%             /|            /|            /|            /|
+%            / |        o--/-|-----------/-|--->x      / |
+%           +-------------+-------------+-------------+  |
+%           |  |          |  |          |  |          |  |
+%           |  |    o-----|--|----->x   |  |          |  |
+%           |  |          |  |          |  |          |  |
+%           |  + - - - - -|- + - - - - -|- + - - - - -|- +
+%           | /       o---|-/---->x     | /           | /
+%           |/            |/            |/            |/
+%           +-------------+-------------+-------------+
+%
+% Luckily, this is given by the |dspace| function above, and is returned as Xf.
+% We can use this function in our options to the |mdpsim| function.
+
+opts = mdpset(m, 'StateFunction', Xf);
+
+% termFun = @(t, x) any(ismember(Xf(x{:}), [91, 191, 291, 391]));
+% opts = mdpset(m, opts, 'TermEvent', termFun);
+
+%%
+% Finally, we can simulate the output of the system. We want to see where the
+% robot will get in 10 seconds using the policy we optimized earlier. We give
+% it some initial conditions, and pass the MDP object as our input.
+[t, y] = mdpsim(sys, m, [0 20], {[6.5, 1.5, 0]}, 'MdpOptions', opts);
+
+%%
+% From here, we can plot the x/y coordinates of the robot as it moves around.
+plot(y{1}(:, 2), y{1}(:, 1));
+grid
+
+set(gca, 'YDir', 'reverse')
+
+%%
+% We can also plot all 3 states simultaneously. Movement up and down correspond
+% to changes in the orientation of the robot.
+plot3(y{1}(:, 1), y{1}(:, 2), y{1}(:, 3));
+grid

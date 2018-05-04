@@ -1,8 +1,8 @@
 function T = c2d(sys, varargin)
 %C2D Convert continuous state-space model to discrete model.
 %   
-%   T = C2D(sys, Ts) converts a continuous state-space model to a discrete
-%   model with sampling time Ts.
+%   T = C2D(sys, Ts) converts a continuous state-space model to a discrete model
+%   with sampling time Ts.
 
 p = inputParser;
 addRequired(p, 'sys', @(S) validatesystem(S, {'continuous'}));

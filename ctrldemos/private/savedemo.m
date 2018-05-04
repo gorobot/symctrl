@@ -1,8 +1,8 @@
 function savedemo(name, sys, varargin)
 %SAVEDEMO Save system to file.
 %   
-%   SAVEDEMO(name, sys, C) saves the system defined by 'sys' and the
-%   constants defined by 'C' to the filename defined by '<name>.mat'.
+%   SAVEDEMO(name, sys, C) saves the system defined by 'sys' and the constants
+%   defined by 'C' to the filename defined by '<name>.mat'.
 
 p = inputParser;
 validateName = @(arg) ...

@@ -1,8 +1,7 @@
 function T = d2c(sys, varargin)
 %D2C Convert discrete state-space model to continuous model.
 %   
-%   T = C2D(sys) converts a discrete state-space model to a continuous
-%   model.
+%   T = C2D(sys) converts a discrete state-space model to a continuous model.
 
 p = inputParser;
 addRequired(p, 'sys', @(S) validatesystem(S, {'discrete'}));
