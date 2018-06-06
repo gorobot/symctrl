@@ -1,28 +1,38 @@
-# Symbolic Controls Toolbox
+# Symbolic Controls Library
 
 ## What is this?
-The Symbolic Controls Toolbox is a free (as in speech), open-source Matlab
-toolbox designed to implement a wide array of functions and classes for working
-with control systems using the symbolic toolbox in Matlab.
+The Symbolic Controls Library is a free (as in speech), open-source library
+written in C++ designed to implement a wide array of functions and classes for
+working with control systems.
 
-It is designed to address some of the limitations with the control systems
-toolbox currently available in Matlab and provide an interface for working with:
+It is designed to address some of the limitations with the numerous control
+systems toolboxes currently available and provide an interface for working with:
 
-* Linear Systems (LTI & LTV)
-* Discrete Systems
-* SISO & MIMO
+* Linear Systems
 * Nonlinear Systems
 * Hybrid Systems
+* MDP
 * etc.
 
-New [releases](https://github.com/ajthor/symbolic-controls-toolbox/releases) are kept in the GitHub repository.
+The Symbolic Controls Library uses [SymEngine](https://github.com/symengine/symengine) as a symbolic backend, which is a pure C++ symbolic backend for [SymPy](http://www.sympy.org/en/roadmap.html). Instructions for [installing SymEngine](https://github.com/symengine/symengine#installation) can be found on the project's GitHub page.
 
 New (untested) code is found in the [development branch](https://github.com/ajthor/symbolic-controls-toolbox/tree/development).
 
+New [releases](https://github.com/ajthor/symbolic-controls-toolbox/releases) are kept in the GitHub repository.
+
+Thin wrappers are provided for working with the library in other languages. While the library is written in C++, the C language wrappers included in the library allow it to be used from other languages as well. Wrappers for Python and Matlab are included in the library and installable using CMake.
+
 ## Getting Started
-1. Download the toolbox from the GitHub repository.
-1. Install the toolbox.
+1. Download the library from the GitHub repository.
+1. Install the dependencies.
+1. Install the library using CMake.
 1. Enjoy!
+
+```shell
+> cmake .
+> make
+> make install
+```
 
 ## Your First System
 ```matlab
@@ -44,7 +54,7 @@ nlsim2(sys, 0, [0 10], {[1 1]});
 ```
 
 ## Demonstration Systems
-Several demonstration systems are provided to get started using the toolbox,
+Several demonstration systems are provided to get started using the library,
 including:
 
 * pendulum equations
@@ -52,32 +62,9 @@ including:
 * quadrotor dynamics
 * etc.
 
-The demo systems are located in the `ctrldemos` folder.
-
-The complete list of working demos can be found using:
-```matlab
-help ctrldemo
-```
-
-Load a demo system using the following command.
-Be sure to replace `<system>` with the name of a demo system.
-```matlab
-sys = ctrldemo('<system>');
-```
+The demo systems are located in the `demos` folder.
 
 ## Examples
-Several example scripts are provided in the `doc/examples` directory. Be sure
+Several examples are provided in the `doc/examples` directory. Be sure
 to check the examples and demonstrations for tips on using functions and
-systems provided with the toolbox.
-
-## Testing
-Run the `runAllTests.m` script from the parent directory to run all unit tests
-in the `test` directory. Use this to ensure that the toolbox is working as
-expected before you begin.
-
-Use `runtests` to run specific tests in the `test` directory.
-
-## Disclaimer
-The authors of this toolbox have made every effort to ensure the toolbox
-functions work in the generalized case, but there is no assurance that the
-toolbox will work for every system.
+systems provided with the library.

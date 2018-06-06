@@ -1,0 +1,26 @@
+FROM python:alpine3.7
+
+RUN apk add --no-cache \
+    ca-certificates \
+ && apk add --no-cache --virtual .build-deps \
+    binutils-dev \
+    cmake \
+    g++ \
+    gcc \
+    git \
+    gmp \
+    gmp-dev \
+    libexecinfo-dev \
+    make \
+    musl-dev \
+    openssl \
+ && pip install \
+    cython \
+    sympy
+
+RUN mkdir -p "/tmp/symengine" \
+ && git clone https://github.com/symengine/symengine /tmp/symengine \
+ && (cd /tmp/symengine && cmake .) \
+ && (cd /tmp/symengine && make && make install) \
+ && git clone https://github.com/symengine/symengine.py /tmp/symenginepy \
+ && (cd /tmp/symenginepy && python setup.py install)

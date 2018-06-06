@@ -1,0 +1,25 @@
+language: cpp
+
+addons:
+  apt:
+    sources:
+        - sourceline: 'ppa:symengine/ppa'
+      packages:
+        - libsymengine-dev
+        - cmake-data
+        - cmake
+
+sudo: required
+compiler:
+  - gcc
+  - clang
+
+os:
+  - linux
+  - osx
+
+dist: trusty
+osx_image: xcode6.4
+
+notifications:
+  email: false
