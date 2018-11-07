@@ -3,16 +3,23 @@
 
 #include <vector>
 #include <symengine/basic.h>
+#include <symengine/dict.h>
 #include <symengine/matrix.h>
 
 #include "system.hpp"
 
 namespace Controls {
 
-// StateSpace Class
+// ----------------------------------------------------------------------
+// StateSpace
+//
 class StateSpace : public System {
 public:
   StateSpace();
+  StateSpace(SymEngine::MatrixBase &A,
+             SymEngine::MatrixBase &B,
+             SymEngine::MatrixBase &C,
+             SymEngine::MatrixBase &D);
   ~StateSpace();
 
   void add_state(const SymEngine::RCP<const SymEngine::Basic> arg);
@@ -48,17 +55,49 @@ public:
 
 protected:
   // Vector of symbolic state variables.
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> states_;
+  SymEngine::vec_basic states_;
 
   // Vector of symbolic input variables.
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> inputs_;
+  SymEngine::vec_basic inputs_;
 
   // Vector of state equations.
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> f_;
+  SymEngine::vec_basic f_;
 
   // Vector of output equations.
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> g_;
+  SymEngine::vec_basic g_;
+
+  // TODO: Add sparse matrix backend to state space class.
+  // SymEngine::CSRMatrix A;
+  // SymEngine::CSRMatrix B;
+  // SymEngine::CSRMatrix C;
+  // SymEngine::CSRMatrix D;
 };
+
+
+bool check_abcd(SymEngine::MatrixBase &A,
+                SymEngine::MatrixBase &B,
+                SymEngine::MatrixBase &C,
+                SymEngine::MatrixBase &D);
+
+void set_abcd(StateSpace &obj,
+              SymEngine::DenseMatrix &A,
+              SymEngine::DenseMatrix &B,
+              SymEngine::DenseMatrix &C,
+              SymEngine::DenseMatrix &D);
+
+// Separate dx/dt = f(.) + g(.)u into f(.) and g(.) terms.
+void nonlinear_sep();
+
+void c2d();
+void d2c();
+
+void similarity_transform(StateSpace &obj, SymEngine::DenseMatrix &P);
+
+// ----------------------------------------------------------------------
+// Linearization
+//
+void linearize(StateSpace &obj);
+// void linearize(const SymEngine::vec_basic &eq);
 
 } // Controls
 

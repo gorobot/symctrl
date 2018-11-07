@@ -65,8 +65,22 @@ sys = ctrldemo('<system>');
 
 ## For Developers
 
-The generated toolbox should be a stand-alone distribution.
+Use the Matlab `calllib` function to interface with C wrapper functions. All
+wrapper functions should use basic C types listed in the Matlab documentation.
+
+* `matlab_wrapper.hpp`
+* `matlab_wrapper.cc`
+
+The generated toolbox should be a stand-alone distribution. CMake is the
+preferred method for compiling and installing the C wrappers into a shared
+library.
+
+For testing, it may be easier to use matlab from the command-line in order to
+deal with any errors that may arise while debugging.
 
 ```shell
 > matlab -nosplash -nojvm -nodesktop -nodisplay -r '<script>, pause(1), quit'
 ```
+
+Note that an extra pause is added at the end of the script before exiting. This
+is often necessary to prevent some errors.

@@ -37,7 +37,10 @@ public:
     }
   }
 
+  // TODO: Add subs for transfer function.
   virtual void visit(TransferFunction &m) {}
+
+  // TODO: Add subs for hybrid system.
 };
 
 void subs(System &m,

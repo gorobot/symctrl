@@ -5,3 +5,4 @@ warning('off');
 loadmatctrl();
 
 warning(s);
+clear('s');

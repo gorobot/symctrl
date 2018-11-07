@@ -95,9 +95,17 @@ install(EXPORT symctrl
 )
 
 install(FILES
-  ${CMAKE_BINARY_DIR}/ctrl_export.h
+  ${CMAKE_BINARY_DIR}/symctrl_export.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libsymctrl
 )
+
+# Testing
+option(BUILD_TESTS "Build unit tests." ON)
+
+if(BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(test)
+endif()
 
 # Matlab Support
 option(BUILD_MATLAB "Build Matlab wrapper library." OFF)

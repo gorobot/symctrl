@@ -5,6 +5,10 @@
 
 find_package(SymEngine CONFIG REQUIRED)
 
+set(MATLAB_ADDITIONAL_VERSIONS
+    "R2018b=9.5"
+    "R2018a=9.4")
+
 find_package(Matlab MODULE REQUIRED
   COMPONENTS MAIN_PROGRAM MEX_COMPILER MX_LIBRARY
 )
@@ -130,7 +134,7 @@ install(FILES
 )
 
 install(DIRECTORY
-  symctrl
+  matctrl
   DESTINATION ${MATCTRL_PATH}
 )
 
@@ -138,3 +142,8 @@ install(FILES
   ${HEADERS}
   DESTINATION ${MATCTRL_PATH}/include
 )
+
+if(BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(test)
+endif()

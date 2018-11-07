@@ -11,23 +11,37 @@ namespace Controls {
 class TransferFunction : public System {
 public:
   TransferFunction();
+  TransferFunction(const SymEngine::RCP<const SymEngine::Basic> arg) : var_(arg) {};
   ~TransferFunction();
 
-  void set_num(const std::vector<SymEngine::RCP<const SymEngine::Basic>> &arg);
-  void set_den(const std::vector<SymEngine::RCP<const SymEngine::Basic>> &arg);
+  void set_var(const SymEngine::RCP<const SymEngine::Basic> arg);
+  SymEngine::RCP<const SymEngine::Basic> get_var();
 
-  // void add_num(SymEngine::RCP<const SymEngine::Basic> arg);
-  // void add_den(SymEngine::RCP<const SymEngine::Basic> arg);
+  void add_num(const SymEngine::RCP<const SymEngine::Basic> arg);
+  void set_num(size_t n, const SymEngine::RCP<const SymEngine::Basic> arg);
+  SymEngine::RCP<const SymEngine::Basic> get_num(size_t n);
+  // void remove_num(size_t n);
+  size_t get_num_nums();
 
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> get_num();
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> get_den();
+  void add_den(const SymEngine::RCP<const SymEngine::Basic> arg);
+  void set_den(size_t n, const SymEngine::RCP<const SymEngine::Basic> arg);
+  SymEngine::RCP<const SymEngine::Basic> get_den(size_t n);
+  // void remove_den(size_t n);
+  size_t get_num_dens();
 
   void accept(SystemVisitor &visitor);
 
 private:
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> num_;
-  std::vector<SymEngine::RCP<const SymEngine::Basic>> den_;
+  SymEngine::RCP<const SymEngine::Basic> var_;
+
+  SymEngine::vec_basic num_;
+  SymEngine::vec_basic den_;
 };
+
+void transferfunction_poles();
+void transferfunction_zeros();
+
+void minimal_realization();
 
 } // Controls
 

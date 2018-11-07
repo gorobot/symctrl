@@ -6,12 +6,18 @@ set(SRC
   analysis.cc
   c_wrapper.cc
   control_model.cc
-  mdp.cc
+  # mdp.cc
+  # mdp_train.cc
   state_space.cc
   system.cc
-  transfer_function.cc
+  # transfer_function.cc
   visitor.cc
-  utils/eig.cc
+  matrix/eig.cc
+  matrix/hessenberg.cc
+  matrix/house.cc
+  matrix/linalg.cc
+  matrix/qr.cc
+  matrix/schur.cc
 )
 
 # A list of all header files with C header definitions.
@@ -19,15 +25,18 @@ set(HEADERS
   analysis.hpp
   c_wrapper.hpp
   control_model.hpp
-  mdp.hpp
+  # mdp.hpp
+  # mdp_train.hpp
+  ode_sim.hpp
   state_space.hpp
   subs.hpp
   system.hpp
-  transfer_function.hpp
+  # transfer_function.hpp
   visitor.hpp
-  sim/ode_simulator.hpp
-  utils/eig.hpp
-  utils/sparse_matrix.hpp
+  matrix/eig.hpp
+  matrix/linalg.hpp
+  matrix/dense.hpp
+  matrix/sparse.hpp
 )
 
 INSTALL_HEADERS_WITH_DIRECTORY(HEADERS)

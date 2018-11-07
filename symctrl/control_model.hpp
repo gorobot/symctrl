@@ -3,6 +3,11 @@
 
 namespace Controls {
 
+enum ModelDataType {
+  Continuous,
+  Discrete
+};
+
 class ControlModel {
 public:
   virtual ~ControlModel() {};

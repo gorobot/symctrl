@@ -13,7 +13,8 @@
 
 #include "analysis.hpp"
 #include "subs.hpp"
-#include "utils/eig.hpp"
+#include "matrix/eig.hpp"
+#include "matrix/linalg.hpp"
 
 extern "C" {
 
@@ -62,30 +63,34 @@ struct CMapBasicBasic {
 // ----------------------------------------------------------------------
 // Linear Algebra Function Definitions
 //
-void la_compute_hessenberg(CDenseMatrix *A, CDenseMatrix *result) {
+void linalg_hessenberg(CDenseMatrix *A, CDenseMatrix *result) {
   C_WRAPPER_BEGIN
 
-  Controls::compute_hessenberg(A->m, result->m);
+  Controls::hessenberg(A->m, result->m);
 
   C_WRAPPER_END()
 }
 
-void la_compute_schur(CDenseMatrix *A,
-                      CDenseMatrix *U,
-                      CDenseMatrix *T) {
+void linalg_schur(CDenseMatrix *A, CDenseMatrix *U, CDenseMatrix *T) {
   C_WRAPPER_BEGIN
 
-  Controls::compute_schur(A->m, U->m, T->m);
+  Controls::schur(A->m, U->m, T->m);
 
   C_WRAPPER_END()
 }
 
-void la_compute_eigenvalues(CDenseMatrix *A,
-                            CVecBasic *l,
-                            CDenseMatrix *v) {
+void linalg_eigenvalues(CDenseMatrix *A, CVecBasic *l, CDenseMatrix *v) {
   C_WRAPPER_BEGIN
 
-  Controls::compute_eigenvalues(A->m, l->m, v->m);
+  Controls::eigenvalues(A->m, l->m, v->m);
+
+  C_WRAPPER_END()
+}
+
+void linalg_first_eigenvalue(CDenseMatrix *A, CRCPBasic *l, double tol) {
+  C_WRAPPER_BEGIN
+
+  l->m = Controls::get_first_eigenvalue(A->m, tol);
 
   C_WRAPPER_END()
 }
@@ -315,108 +320,168 @@ void statespace_obsv(StateSpace_C *obj, CDenseMatrix *result) {
   C_WRAPPER_END()
 }
 
-// ----------------------------------------------------------------------
-// MDP Function Definitions
-//
-struct MDP_C {
-  Controls::MDP m;
-};
-
-// struct SparseMatrix_key {
-//   sparse_key_t k
+// // ----------------------------------------------------------------------
+// // MDP Function Definitions
+// //
+// struct MDP_C {
+//   Controls::MDP m;
 // };
-// typedef struct SparseMatrix_key SparseMatrix_key;
 //
-// struct SparseMatrix_C {
-//   SparseMatrix<double> m;
-// };
-// typedef struct SparseMatrix_C SparseMatrix_C;
-
-MDP_C *mdp_new() {
-  return new MDP_C;
-}
-
-void mdp_free(MDP_C *obj) {
-  if(!obj) {
-    return;
-  }
-  delete obj;
-}
-
-size_t mdp_num_states_get(MDP_C *obj) {
-  return obj->m.get_num_states();
-}
-void mdp_num_states_set(MDP_C *obj, size_t n) {
-  C_WRAPPER_BEGIN
-
-  obj->m.set_num_states(n);
-
-  C_WRAPPER_END()
-}
-
-size_t mdp_num_inputs_get(MDP_C *obj) {
-  return obj->m.get_num_inputs();
-}
-void mdp_num_inputs_set(MDP_C *obj, size_t n) {
-  C_WRAPPER_BEGIN
-
-  obj->m.set_num_inputs(n);
-
-  C_WRAPPER_END()
-}
-
-void mdp_probabilities_set(MDP_C *obj,
-                           size_t u,
-                           size_t x,
-                           size_t xp,
-                           const double arg) {
-  //
-  C_WRAPPER_BEGIN
-
-  obj->m.set_probability(u, x, xp, arg);
-
-  C_WRAPPER_END()
-}
-double mdp_probabilities_get(MDP_C *obj, size_t u, size_t x, size_t xp) {
-  C_WRAPPER_BEGIN
-
-  return obj->m.get_probability(u, x, xp);
-
-  C_WRAPPER_END(0)
-}
-// void mdp_probabilities_erase(MDP_C *obj, size_t n)
-
-void mdp_rewards_set(MDP_C *obj,
-                     size_t u,
-                     size_t x,
-                     size_t xp,
-                     const double arg) {
-  //
-  C_WRAPPER_BEGIN
-
-  obj->m.set_reward(u, x, xp, arg);
-
-  C_WRAPPER_END()
-}
-double mdp_rewards_get(MDP_C *obj, size_t u, size_t x, size_t xp) {
-  C_WRAPPER_BEGIN
-
-  return obj->m.get_reward(u, x, xp);
-
-  C_WRAPPER_END(0)
-}
-// void mdp_rewards_erase(MDP_C *obj, size_t n)
-
-double mdp_gamma_get(MDP_C *obj) {
-  return obj->m.get_gamma();
-}
-void mdp_gamma_set(MDP_C *obj, const double n) {
-  C_WRAPPER_BEGIN
-
-  obj->m.set_gamma(n);
-
-  C_WRAPPER_END()
-}
+// // struct SparseMatrix_key {
+// //   sparse_key_t k
+// // };
+// // typedef struct SparseMatrix_key SparseMatrix_key;
+// //
+// // struct SparseMatrix_C {
+// //   SparseMatrix<double> m;
+// // };
+// // typedef struct SparseMatrix_C SparseMatrix_C;
+//
+// MDP_C *mdp_new(const size_t x, const size_t u) {
+//   return new MDP_C({{x, u}});
+// }
+// 
+// void mdp_free(MDP_C *obj) {
+//   if(!obj) {
+//     return;
+//   }
+//   delete obj;
+// }
+//
+// size_t mdp_nstates(MDP_C *obj) {
+//   return obj->m.nstates();
+// }
+//
+// size_t mdp_ninputs(MDP_C *obj) {
+//   return obj->m.ninputs();
+// }
+//
+// void mdp_probabilities_set(MDP_C *obj, size_t u,
+//                            size_t x, size_t xp, const double arg) {
+//   //
+//   C_WRAPPER_BEGIN
+//
+//   obj->m.set_probability(u, x, xp, arg);
+//
+//   C_WRAPPER_END()
+// }
+// double mdp_probabilities_get(MDP_C *obj, size_t u, size_t x, size_t xp) {
+//   C_WRAPPER_BEGIN
+//
+//   return obj->m.get_probability(u, x, xp);
+//
+//   C_WRAPPER_END(0)
+// }
+// void mdp_probabilities_set_sparse(MDP_C *obj, size_t u,
+//                                   size_t rlen, size_t clen,
+//                                   size_t *r, size_t *c, double *v) {
+//   C_WRAPPER_BEGIN
+//
+//   size_t n, m, idx = 0;
+//   for(n = 0; n < rlen; n++) { // row
+//     for(m = 0; m < clen; m++) { // col
+//       obj->m.set_probability(u, r[n], c[m], v[idx++]);
+//     }
+//   }
+//
+//   C_WRAPPER_END()
+// }
+// void mdp_probabilities_get_sparse(MDP_C *obj, size_t u,
+//                                   size_t **r, size_t **c, double **v) {
+//   C_WRAPPER_BEGIN
+//
+//   if(obj->m.probabilities_.at(u).empty()) {
+//     return;
+//   }
+//
+//   size_t k = 0;
+//   for(const auto &it : obj->m.probabilities_.at(u)) {
+//     (*r)[k] = std::get<0>(it.first);
+//     (*c)[k] = std::get<1>(it.first);
+//     (*v)[k] = it.second;
+//
+//     k++;
+//   }
+//
+//   C_WRAPPER_END()
+// }
+// // void mdp_probabilities_erase(MDP_C *obj, size_t n)
+// size_t mdp_probabilities_nnz(MDP_C *obj, size_t u) {
+//   C_WRAPPER_BEGIN
+//
+//   return obj->m.probabilities_.at(u).nnz();
+//
+//   C_WRAPPER_END(0)
+// }
+//
+// void mdp_rewards_set(MDP_C *obj, size_t u,
+//                      size_t x, size_t xp, const double arg) {
+//   //
+//   C_WRAPPER_BEGIN
+//
+//   obj->m.set_reward(u, x, xp, arg);
+//
+//   C_WRAPPER_END()
+// }
+// double mdp_rewards_get(MDP_C *obj, size_t u, size_t x, size_t xp) {
+//   C_WRAPPER_BEGIN
+//
+//   return obj->m.get_reward(u, x, xp);
+//
+//   C_WRAPPER_END(0)
+// }
+// void mdp_rewards_set_sparse(MDP_C *obj, size_t u,
+//                             size_t rlen, size_t clen,
+//                             size_t *r, size_t *c, double *v) {
+//   C_WRAPPER_BEGIN
+//
+//   size_t n, m, idx = 0;
+//   for(n = 0; n < rlen; n++) { // row
+//     for(m = 0; m < clen; m++) { // col
+//       obj->m.set_reward(u, r[n], c[m], v[idx++]);
+//     }
+//   }
+//
+//   C_WRAPPER_END()
+// }
+// void mdp_rewards_get_sparse(MDP_C *obj, size_t u,
+//                             size_t **r, size_t **c, double **v) {
+//   C_WRAPPER_BEGIN
+//
+//   if(obj->m.rewards_.at(u).empty()) {
+//     return;
+//   }
+//
+//   size_t k = 0;
+//   for(const auto &it : obj->m.rewards_.at(u)) {
+//     (*r)[k] = std::get<0>(it.first);
+//     (*c)[k] = std::get<1>(it.first);
+//     (*v)[k] = it.second;
+//
+//     k++;
+//   }
+//
+//   C_WRAPPER_END()
+// }
+// // void mdp_rewards_erase(MDP_C *obj, size_t n)
+// size_t mdp_rewards_nnz(MDP_C *obj, size_t u) {
+//   C_WRAPPER_BEGIN
+//
+//   return obj->m.rewards_.at(u).nnz();
+//
+//   C_WRAPPER_END(0)
+// }
+//
+// double mdp_gamma_get(MDP_C *obj) {
+//   return obj->m.get_gamma();
+// }
+// void mdp_gamma_set(MDP_C *obj, const double n) {
+//   C_WRAPPER_BEGIN
+//
+//   obj->m.set_gamma(n);
+//
+//   C_WRAPPER_END()
+// }
 
 // ----------------------------------------------------------------------
 // TransferFunction Function Definitions
