@@ -32,7 +32,7 @@ macro(create_test)
 endmacro()
 
 create_test(
-  NAME Numerics
+  NAME States
   FILES
-  numerics/test_complex
+  states/test_states
 )
