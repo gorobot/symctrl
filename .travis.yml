@@ -1,0 +1,81 @@
+
+sudo: true
+language: cpp
+
+branches:
+  only:
+  - master
+  - development
+
+matrix:
+  include:
+
+    # Build for Linux
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-7
+            - cmake
+      env:
+        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
+
+    # Build for Linux
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-8
+            - cmake
+      env:
+        - MATRIX_EVAL="CC=gcc-8 && CXX=g++-8"
+
+    # Build for Linux
+    - os: linux
+      addons:
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+            - cmake
+      env:
+        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
+
+    # # Build for OSX
+    # - os: osx
+    #   osx_image: xcode9.4
+    #   addons:
+    #     homebrew:
+    #       packages:
+    #       - cmake
+    #       update: true
+    #   env:
+    #     - MATRIX_EVAL="brew install gcc@7 && CC=gcc-7 && CXX=g++-7"
+
+before_install:
+  - eval "${MATRIX_EVAL}"
+
+install:
+  - git clone https://github.com/catchorg/Catch2 /tmp/catch2
+  - (cd /tmp/catch2 && cmake -Bbuild -H. -DBUILD_TESTING=OFF)
+  - (cd /tmp/catch2 && sudo cmake --build build/ --target install)
+
+script:
+  - mkdir build
+  - cd build
+  - cmake -DBUILD_TESTS=OFF ..
+  - make
+  - sudo make install
+  - cmake -DBUILD_TESTS=ON ..
+  - make
+  - ctest --verbose
+
+  # (cd build && cmake -DBUILD_TESTS=ON .. && make install && ctest --verbose)
+
+notifications:
+  email: false
