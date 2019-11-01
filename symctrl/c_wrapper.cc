@@ -3,6 +3,9 @@
 //
 
 #include <iostream>
+#include <functional>
+#include <random>
+#include <vector>
 
 #include <symengine/basic.h>
 #include <symengine/dict.h>
@@ -13,8 +16,11 @@
 
 #include "analysis.hpp"
 #include "subs.hpp"
-#include "matrix/eig.hpp"
-#include "matrix/linalg.hpp"
+// #include "matrix/eig.hpp"
+// #include "matrix/linalg.hpp"
+
+#include <symctrl/ode/ode.hpp>
+#include <symctrl/math/math.hpp>
 
 extern "C" {
 
@@ -60,40 +66,40 @@ struct CMapBasicBasic {
     SymEngine::map_basic_basic m;
 };
 
-// ----------------------------------------------------------------------
-// Linear Algebra Function Definitions
+// // ----------------------------------------------------------------------
+// // Linear Algebra Function Definitions
+// //
+// void linalg_hessenberg(CDenseMatrix *A, CDenseMatrix *result) {
+//   C_WRAPPER_BEGIN
 //
-void linalg_hessenberg(CDenseMatrix *A, CDenseMatrix *result) {
-  C_WRAPPER_BEGIN
-
-  Controls::hessenberg(A->m, result->m);
-
-  C_WRAPPER_END()
-}
-
-void linalg_schur(CDenseMatrix *A, CDenseMatrix *U, CDenseMatrix *T) {
-  C_WRAPPER_BEGIN
-
-  Controls::schur(A->m, U->m, T->m);
-
-  C_WRAPPER_END()
-}
-
-void linalg_eigenvalues(CDenseMatrix *A, CVecBasic *l, CDenseMatrix *v) {
-  C_WRAPPER_BEGIN
-
-  Controls::eigenvalues(A->m, l->m, v->m);
-
-  C_WRAPPER_END()
-}
-
-void linalg_first_eigenvalue(CDenseMatrix *A, CRCPBasic *l, double tol) {
-  C_WRAPPER_BEGIN
-
-  l->m = Controls::get_first_eigenvalue(A->m, tol);
-
-  C_WRAPPER_END()
-}
+//   Controls::hessenberg(A->m, result->m);
+//
+//   C_WRAPPER_END()
+// }
+//
+// void linalg_schur(CDenseMatrix *A, CDenseMatrix *U, CDenseMatrix *T) {
+//   C_WRAPPER_BEGIN
+//
+//   Controls::schur(A->m, U->m, T->m);
+//
+//   C_WRAPPER_END()
+// }
+//
+// void linalg_eigenvalues(CDenseMatrix *A, CVecBasic *l, CDenseMatrix *v) {
+//   C_WRAPPER_BEGIN
+//
+//   Controls::eigenvalues(A->m, l->m, v->m);
+//
+//   C_WRAPPER_END()
+// }
+//
+// void linalg_first_eigenvalue(CDenseMatrix *A, CRCPBasic *l, double tol) {
+//   C_WRAPPER_BEGIN
+//
+//   l->m = Controls::get_first_eigenvalue(A->m, tol);
+//
+//   C_WRAPPER_END()
+// }
 
 // ----------------------------------------------------------------------
 // Analysis Function Definitions
@@ -320,34 +326,141 @@ void statespace_obsv(StateSpace_C *obj, CDenseMatrix *result) {
   C_WRAPPER_END()
 }
 
-// // ----------------------------------------------------------------------
-// // MDP Function Definitions
-// //
+// ----------------------------------------------------------------------
+// TransferFunction Function Definitions
+//
+struct TransferFunction_C {
+  Controls::TransferFunction m;
+};
+
+TransferFunction_C *transferfunction_new() {
+  return new TransferFunction_C;
+}
+
+void transferfunction_free(TransferFunction_C *obj) {
+  if(!obj) {
+    return;
+  }
+  delete obj;
+}
+
+void transferfunction_var_get(TransferFunction_C *obj, basic result) {
+  C_WRAPPER_BEGIN
+
+  result->m = obj->m.get_var();
+
+  C_WRAPPER_END()
+}
+void transferfunction_var_set(TransferFunction_C *obj, const basic arg) {
+  C_WRAPPER_BEGIN
+
+  obj->m.set_var(arg->m);
+
+  C_WRAPPER_END()
+}
+
+void transferfunction_num_push_back(TransferFunction_C *obj, const basic arg) {
+  C_WRAPPER_BEGIN
+
+  obj->m.add_num(arg->m);
+
+  C_WRAPPER_END()
+}
+void transferfunction_num_get(TransferFunction_C *obj, size_t n, basic result) {
+  C_WRAPPER_BEGIN
+
+  result->m = obj->m.get_num(n);
+
+  C_WRAPPER_END()
+}
+void transferfunction_num_set(TransferFunction_C *obj, size_t n, const basic arg) {
+  C_WRAPPER_BEGIN
+
+  obj->m.set_num(n, arg->m);
+
+  C_WRAPPER_END()
+}
+size_t transferfunction_num_size(TransferFunction_C *obj) {
+  return obj->m.get_num_nums();
+}
+
+void transferfunction_den_push_back(TransferFunction_C *obj, const basic arg) {
+  C_WRAPPER_BEGIN
+
+  obj->m.add_den(arg->m);
+
+  C_WRAPPER_END()
+}
+void transferfunction_den_get(TransferFunction_C *obj, size_t n, basic result) {
+  C_WRAPPER_BEGIN
+
+  result->m = obj->m.get_den(n);
+
+  C_WRAPPER_END()
+}
+void transferfunction_den_set(TransferFunction_C *obj, size_t n, const basic arg) {
+  C_WRAPPER_BEGIN
+
+  obj->m.set_den(n, arg->m);
+
+  C_WRAPPER_END()
+}
+size_t transferfunction_den_size(TransferFunction_C *obj) {
+  return obj->m.get_num_dens();
+}
+
+// ----------------------------------------------------------------------
+// CostFunction Function Definitions
+//
+struct StdFunction_C {
+  // std::function<int(int)> m;
+  int (*m)(int);
+};
+
+StdFunction_C *std_function_new(int (*arg)(int)) {
+  auto s = new StdFunction_C;
+  s->m = arg;
+  return s;
+  // return new StdFunction_C;
+}
+void std_function_free(StdFunction_C *obj) {
+  if(!obj) {
+    return;
+  }
+  delete obj;
+}
+
+// struct CostFunction_C {
+//   Controls::CostFunction m;
+// };
+//
+// CostFunction_C *cost_function_new() {
+//   return new CostFunction_C;
+// }
+// void cost_function_free(CostFunction_C *obj) {
+//   if(!obj) {
+//     return;
+//   }
+//   delete obj;
+// }
+
+// ----------------------------------------------------------------------
+// MDP Function Definitions
+//
 // struct MDP_C {
 //   Controls::MDP m;
 // };
 //
-// // struct SparseMatrix_key {
-// //   sparse_key_t k
-// // };
-// // typedef struct SparseMatrix_key SparseMatrix_key;
-// //
-// // struct SparseMatrix_C {
-// //   SparseMatrix<double> m;
-// // };
-// // typedef struct SparseMatrix_C SparseMatrix_C;
-//
-// MDP_C *mdp_new(const size_t x, const size_t u) {
-//   return new MDP_C({{x, u}});
+// MDP_C *mdp_new() {
+//   // return new MDP_C;
 // }
-// 
 // void mdp_free(MDP_C *obj) {
 //   if(!obj) {
 //     return;
 //   }
 //   delete obj;
 // }
-//
+
 // size_t mdp_nstates(MDP_C *obj) {
 //   return obj->m.nstates();
 // }
@@ -484,21 +597,271 @@ void statespace_obsv(StateSpace_C *obj, CDenseMatrix *result) {
 // }
 
 // ----------------------------------------------------------------------
-// TransferFunction Function Definitions
+// ODE Solver Function Definitions
 //
-struct TransferFunction_C {
-  Controls::TransferFunction m;
+struct OdeOptions_C {
+  Controls::OdeOptions m;
 };
 
-// TransferFunction_C* transferfunction_new() {
-//   return new TransferFunction_C;
-// }
+OdeOptions_C *odeoptions_new() {
+  return new OdeOptions_C;
+}
+void odeoptions_free(OdeOptions_C *obj) {
+  if(!obj) {
+    return;
+  }
+  delete obj;
+}
+
+double odeoptions_step_size_get(OdeOptions_C *obj) {
+  C_WRAPPER_BEGIN
+
+  return obj->m.get_step_size();
+
+  C_WRAPPER_END(0.0)
+}
+void odeoptions_step_size_set(OdeOptions_C *obj,
+                              const double arg) {
+  C_WRAPPER_BEGIN
+
+  obj->m.set_step_size(arg);
+
+  C_WRAPPER_END()
+}
+
+void slv_ode_euler(StateSpace_C *obj,
+                   const double *t_span,
+                   const size_t t_span_len,
+                   const double *x0,
+                   const size_t x0_len,
+                   double *t_result,
+                   double *x_result,
+                   OdeOptions_C *options) {
+  //
+  C_WRAPPER_BEGIN
+
+  size_t i;
+
+  std::vector<double> t_span_vec(t_span_len);
+  for(i = 0; i < t_span_len; i++) {
+    t_span_vec[i] = t_span[i];
+  }
+
+  std::vector<double> x0_vec(x0_len);
+  for(i = 0; i < x0_len; i++) {
+    x0_vec[i] = x0[i];
+  }
+
+  std::vector<double> t_result_vec;
+  std::vector<double> x_result_vec;
+
+  ode_euler(obj->m, t_span_vec, x0_vec, t_result_vec, x_result_vec, options->m);
+
+  for(i = 0; i < t_result_vec.size(); i++) {
+    t_result[i] = t_result_vec.at(i);
+  }
+
+  for(i = 0; i < x_result_vec.size(); i++) {
+    x_result[i] = x_result_vec.at(i);
+  }
+
+  C_WRAPPER_END()
+}
+
+// ----------------------------------------------------------------------
+// RandomDevice Function Definitions
 //
-// void transferfunction_free(TransferFunction_C* obj) {
-//   if(!obj) {
-//     return;
-//   }
-//   delete obj;
-// }
+struct RandomDevice_C {
+  std::random_device *m;
+};
+
+RandomDevice_C *random_device_new() {
+  return new RandomDevice_C;
+}
+void random_device_init(generator *obj) {
+  obj->m = new std::random_device;
+}
+void random_device_free(generator *obj) {
+  if(!obj) {
+    return;
+  }
+  delete obj;
+}
+
+// ----------------------------------------------------------------------
+// RandomDistribution Function Definitions
+//
+struct RandomDistribution_C {
+  Controls::Math::RandomNumberDistribution *m;
+};
+
+RandomDistribution_C *random_number_distribution_new() {
+  return new RandomDistribution_C;
+}
+void random_number_distribution_free(RandomDistribution_C *obj) {
+  if(!obj) {
+    return;
+  }
+  delete obj;
+}
+
+// #ifndef SYMCTRL_RANDOM_DISTRIBUTIONS_C
+// #define SYMCTRL_RANDOM_DISTRIBUTIONS_C(MACRO) \
+//   MACRO(uniform_int_distribution, const int a, const int b) \
+//   MACRO(uniform_real_distribution, const double a, const double b) \
+//   MACRO(bernoulli_distribution, const double p) \
+//   MACRO(negative_binomial_distribution, const int k,
+//   const double p) \
+//   MACRO(geometric_distribution, const double p) \
+//   MACRO(poisson_distribution, const double mean) \
+//   MACRO(exponential_distribution, const double lambda) \
+//   MACRO(gamma_distribution, const double alpha, const double beta) \
+//   MACRO(weibull_distribution, const double a, const double b) \
+//   MACRO(extreme_value_distribution, const double a, const double b) \
+//   MACRO(normal_distribution, const double mean, const double stddev) \
+//   MACRO(lognormal_distribution, const double m, const double s) \
+//   MACRO(chi_squared_distribution, const double n) \
+//   MACRO(cauchy_distribution, const double a, const double b) \
+//   MACRO(fisher_f_distribution, const double m, const double n) \
+//   MACRO(student_t_distribution, const double n)
+// #endif
+// //
+// // #define CONST_ARGS(type, ...)
+// // #define SYMCTRL_RANDOM_DISTRIBUTIONS_C_HEADER(name, ...) \
+// // void ##name##_set(dist *obj, __VA_ARGS__)
+
+void uniform_int_distribution_set(dist *obj, const int a, const int b) {
+  obj->m = new Controls::Math::uniform_int_distribution<>(a, b);
+}
+void uniform_real_distribution_set(dist *obj, const double a, const double b) {
+  obj->m = new Controls::Math::uniform_real_distribution<>(a, b);
+}
+void bernoulli_distribution_set(dist *obj, const double p) {
+  // obj->m = new Controls::Math::bernoulli_distribution(p);
+}
+void negative_binomial_distribution_set(dist *obj,
+                                        const int k,
+                                        const double p) {
+  obj->m = new Controls::Math::negative_binomial_distribution<>(k, p);
+}
+void geometric_distribution_set(dist *obj, const double p) {
+  obj->m = new Controls::Math::geometric_distribution<>(p);
+}
+void poisson_distribution_set(dist *obj, const double mean) {
+  obj->m = new Controls::Math::poisson_distribution<>(mean);
+}
+void exponential_distribution_set(dist *obj, const double lambda) {
+  obj->m = new Controls::Math::exponential_distribution<>(lambda);
+}
+void gamma_distribution_set(dist *obj, const double alpha, const double beta) {
+  obj->m = new Controls::Math::gamma_distribution<>(alpha, beta);
+}
+void weibull_distribution_set(dist *obj, const double a, const double b) {
+  obj->m = new Controls::Math::weibull_distribution<>(a, b);
+}
+void extreme_value_distribution_set(dist *obj, const double a, const double b) {
+  obj->m = new Controls::Math::extreme_value_distribution<>(a, b);
+}
+void normal_distribution_set(dist *obj, const double mean, const double stddev) {
+  obj->m = new Controls::Math::normal_distribution<>(mean, stddev);
+}
+void lognormal_distribution_set(dist *obj, const double m, const double s) {
+  obj->m = new Controls::Math::lognormal_distribution<>(m, s);
+}
+void chi_squared_distribution_set(dist *obj, const double n) {
+  obj->m = new Controls::Math::chi_squared_distribution<>(n);
+}
+void cauchy_distribution_set(dist *obj, const double a, const double b) {
+  obj->m = new Controls::Math::cauchy_distribution<>(a, b);
+}
+void fisher_f_distribution_set(dist *obj, const double m, const double n) {
+  obj->m = new Controls::Math::fisher_f_distribution<>(m, n);
+}
+void student_t_distribution_set(dist *obj, const double n) {
+  obj->m = new Controls::Math::student_t_distribution<>(n);
+}
+
+// ----------------------------------------------------------------------
+// RandomVariable Function Definitions
+//
+struct RandomVariable_C {
+  SymEngine::RCP<const Controls::Math::RandomVariable> m;
+};
+
+RandomVariable_C *random_variable_new() {
+  return new RandomVariable_C();
+}
+void random_variable_free(RandomVariable_C *obj) {
+  if(!obj) {
+    return;
+  }
+  delete obj;
+}
+
+void random_variable_set(RandomVariable_C *obj,
+                         const char *arg,
+                         const RandomDistribution_C *d) {
+  C_WRAPPER_BEGIN
+
+  obj->m = Controls::Math::random_variable(std::string(arg), d->m);
+
+  C_WRAPPER_END()
+}
+
+void random_variable_name_get(RandomVariable_C *obj, char **result) {
+  C_WRAPPER_BEGIN
+
+  std::string str = obj->m->__str__();
+  auto cc = new char[str.length() + 1];
+  std::strcpy(cc, str.c_str());
+  result[0] = cc;
+
+  C_WRAPPER_END()
+}
+
+double random_variable_sample(RandomVariable_C *obj, generator *gen) {
+  C_WRAPPER_BEGIN
+
+  return (*(obj->m)).sample(*(gen->m));
+
+  C_WRAPPER_END(0)
+}
+
+// ---------------------------------------------------------------------------
+// RandomVariable Replacement Function Definitions
+//
+void statespace_random_variable_replace(StateSpace_C *obj,
+                                        const basic key,
+                                        RandomVariable_C *mapped) {
+  //
+  C_WRAPPER_BEGIN
+
+  CRCPBasic *s = new CRCPBasic();
+  CRCPBasic *r = new CRCPBasic();
+  CRCPBasic *mapp = new CRCPBasic();
+  mapp->m = mapped->m;
+
+  CMapBasicBasic *mapbb = new CMapBasicBasic();
+
+  size_t sz, i;
+
+  (mapbb->m)[key->m] = mapp->m;
+
+  sz = statespace_f_size(obj);
+  for(i = 0; i < sz; i++) {
+    s->m = obj->m.get_f(i);
+
+    r->m = s->m->subs(mapbb->m);
+
+    obj->m.set_f(i, r->m);
+  }
+
+  delete mapbb;
+  delete s;
+  delete r;
+  delete mapp;
+
+  C_WRAPPER_END()
+}
 
 } // C

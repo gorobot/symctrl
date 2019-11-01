@@ -12,6 +12,9 @@ switch (class(A))
     case 'sym'
         X = sym2cell(A);
         X = cellfun(@(x) {char(x)}, X);
+    case 'symfun'
+        X = sym2cell(formula(A));
+        X = cellfun(@(x) {char(x)}, X);
     otherwise
         if isnumeric(A)
             X = num2cell(A);

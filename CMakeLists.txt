@@ -11,13 +11,17 @@ set(CTRLLIB_VERSION ${MAJOR_VERSION}.${MINOR_VERSION}.${PATCH_VERSION})
 
 # set_target_properties(ctrllib PROPERTIES VERSION ${CTRLLIB_VERSION})
 
-find_package(SymEngine CONFIG REQUIRED)
+# find_package(SymEngine CONFIG REQUIRED)
 
 include(GenerateExportHeader)
 include(GNUInstallDirs)
 include(ExternalProject)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+SET(CMAKE_CXX_STANDARD 14)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+SET(CMAKE_CXX_EXTENSIONS OFF)
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99")
 
 # Macro to install header files to the include directory.
@@ -27,7 +31,7 @@ macro(INSTALL_HEADERS_WITH_DIRECTORY HEADER_LIST)
 
         install(FILES
           ${HEADER}
-          DESTINATION include/libsymctrl/${DIR}
+          DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/symctrl/${DIR}
         )
 
     endforeach()
@@ -44,6 +48,9 @@ macro(PREPEND NEW_VAR PREFIX)
   set(${NEW_VAR} "${NEW_LIST}")
 
 endmacro()
+
+set(PROJECT_SRC "")
+set(PROJECT_HEADERS "")
 
 # Project Directories
 #
@@ -76,9 +83,9 @@ target_include_directories(symctrl PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
-target_include_directories(symctrl PUBLIC ${SYMENGINE_INCLUDE_DIRS})
+# target_include_directories(symctrl PUBLIC ${SYMENGINE_INCLUDE_DIRS})
 
-target_link_libraries(symctrl ${SYMENGINE_LIBRARIES})
+# target_link_libraries(symctrl ${SYMENGINE_LIBRARIES})
 
 install(TARGETS symctrl
   EXPORT symctrl
@@ -91,12 +98,12 @@ install(TARGETS symctrl
 install(EXPORT symctrl
   FILE CtrlTargets.cmake
   NAMESPACE Control::
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/libsymctrl
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/symctrl
 )
 
 install(FILES
   ${CMAKE_BINARY_DIR}/symctrl_export.h
-  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/libsymctrl
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/symctrl
 )
 
 # Testing
@@ -112,12 +119,6 @@ option(BUILD_MATLAB "Build Matlab wrapper library." OFF)
 
 if(BUILD_MATLAB)
   add_subdirectory(matlab)
-  # ExternalProject_Add(ctrltbx_matlab
-  #   SOURCE_DIR "${PROJECT_SOURCE_DIR}/matlab"
-  #   BUILD_COMMAND make
-  #   INSTALL_COMMAND make install
-  #   BUILD_ALWAYS 1
-  # )
 endif()
 
 # Python Support
@@ -125,10 +126,4 @@ option(BUILD_PYTHON "Build Python wrapper library." OFF)
 
 if(BUILD_PYTHON)
   add_subdirectory(python)
-  # ExternalProject_Add(ctrltbx_matlab
-  #   SOURCE_DIR "${PROJECT_SOURCE_DIR}/python"
-  #   BUILD_COMMAND make
-  #   INSTALL_COMMAND make install
-  #   BUILD_ALWAYS 1
-  # )
 endif()

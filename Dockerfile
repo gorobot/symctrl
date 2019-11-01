@@ -14,8 +14,7 @@ RUN apk add --no-cache \
     make \
     musl-dev \
     openssl \
- && mkdir -p "/tmp/symengine" \
- && git clone https://github.com/symengine/symengine /tmp/symengine \
- && (cd /tmp/symengine && cmake .) \
- && (cd /tmp/symengine && make && make install) \
+    openblas \
+    openblas-dev \
+    lapack \
  && apk del .build-deps

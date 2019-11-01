@@ -42,4 +42,4 @@ PY_WRAPPER_FUNC(symss);
 }
 #endif
 
-#endif /* end of include guard: PYTHON_PY_WRAPPER_HPP */
+#endif // PYTHON_PY_WRAPPER_HPP

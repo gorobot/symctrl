@@ -73,137 +73,137 @@ extern "C" {
 // ----------------------------------------------------------------------
 // Linear algebra wrapper functions.
 //
-void ml_linalg_hessenberg(int len, char **arg, char **result) {
-  auto mat = dense_matrix_new_rows_cols(len, len);
-  auto res = dense_matrix_new_rows_cols(len, len);
-  auto s = basic_new_heap();
-
-  int i = 0;
-  int j = 0;
-  int idx = 0;
-  for (i = 0; i < len; i++) {
-    for (j = 0; j < len; j++) {
-      basic_parse(s, arg[idx++]);
-      dense_matrix_set_basic(mat, j, i, s);
-    }
-  }
-
-  linalg_hessenberg(mat, res);
-
-  idx = 0;
-  for(i = 0; i < len; i++) { // rows
-    for (j = 0; j < len; j++) { // cols
-      dense_matrix_get_basic(s, res, j, i);
-      // TODO: Convert string here to Matlab Symbolic format.
-      result[idx] = se_parse(basic_str(s));
-      idx++;
-    }
-  }
-
-  basic_free_heap(s);
-  dense_matrix_free(mat);
-  dense_matrix_free(res);
-}
-
-void ml_linalg_schur(int len, char **A, char **U, char **T) {
-  auto mat = dense_matrix_new_rows_cols(len, len);
-  auto res_U = dense_matrix_new_rows_cols(len, len);
-  auto res_T = dense_matrix_new_rows_cols(len, len);
-  auto s = basic_new_heap();
-
-  int i = 0;
-  int j = 0;
-  int idx = 0;
-  for (i = 0; i < len; i++) {
-    for (j = 0; j < len; j++) {
-      basic_parse(s, A[idx++]);
-      dense_matrix_set_basic(mat, j, i, s);
-    }
-  }
-
-  linalg_schur(mat, res_U, res_T);
-
-  idx = 0;
-  for(i = 0; i < len; i++) { // rows
-    for (j = 0; j < len; j++) { // cols
-      dense_matrix_get_basic(s, res_U, j, i);
-      U[idx] = se_parse(basic_str(s));
-
-      dense_matrix_get_basic(s, res_T, j, i);
-      T[idx] = se_parse(basic_str(s));
-
-      idx++;
-    }
-  }
-
-  basic_free_heap(s);
-  dense_matrix_free(mat);
-  dense_matrix_free(res_U);
-  dense_matrix_free(res_T);
-}
-
-void ml_linalg_eigenvalues(int len, char **A, char **l, char **v) {
-  auto mat = dense_matrix_new_rows_cols(len, len);
-  auto res_l = vecbasic_new();
-  auto res_v = dense_matrix_new_rows_cols(len, len);
-  auto s = basic_new_heap();
-
-  int i = 0;
-  int j = 0;
-  int idx = 0;
-  for (i = 0; i < len; i++) {
-    for (j = 0; j < len; j++) {
-      basic_parse(s, A[idx++]);
-      dense_matrix_set_basic(mat, i, j, s);
-    }
-  }
-
-  linalg_eigenvalues(mat, res_l, res_v);
-
-  idx = 0;
-  for(i = 0; i < len; i++) { // rows
-    vecbasic_get(res_l, i, s);
-    l[i] = se_parse(basic_str(s));
-
-    for (j = 0; j < len; j++) { // cols
-      dense_matrix_get_basic(s, res_v, j, i);
-      v[idx] = se_parse(basic_str(s));
-
-      idx++;
-    }
-  }
-
-  basic_free_heap(s);
-  vecbasic_free(res_l);
-  dense_matrix_free(res_v);
-}
-
-void ml_linalg_first_eigenvalue(int len, char **A, char **l, double tol) {
-  auto mat = dense_matrix_new_rows_cols(len, len);
-  auto s = basic_new_heap();
-
-  int i = 0;
-  int j = 0;
-  int idx = 0;
-  for (i = 0; i < len; i++) {
-    for (j = 0; j < len; j++) {
-      basic_parse(s, A[idx++]);
-      dense_matrix_set_basic(mat, i, j, s);
-    }
-  }
-
-  linalg_first_eigenvalue(mat, s, tol);
-
-  l[0] = se_parse(basic_str(s));
-  // dense_matrix_set_basic(l, 0, 0, se_parse(basic_str(s)));
-
-  basic_free_heap(s);
-  dense_matrix_free(mat);
-  // dense_matrix_free(res);
-}
+// void ml_linalg_hessenberg(int len, char **arg, char **result) {
+//   auto mat = dense_matrix_new_rows_cols(len, len);
+//   auto res = dense_matrix_new_rows_cols(len, len);
+//   auto s = basic_new_heap();
+//
+//   int i = 0;
+//   int j = 0;
+//   int idx = 0;
+//   for (i = 0; i < len; i++) {
+//     for (j = 0; j < len; j++) {
+//       basic_parse(s, arg[idx++]);
+//       dense_matrix_set_basic(mat, j, i, s);
+//     }
+//   }
+//
+//   linalg_hessenberg(mat, res);
+//
+//   idx = 0;
+//   for(i = 0; i < len; i++) { // rows
+//     for (j = 0; j < len; j++) { // cols
+//       dense_matrix_get_basic(s, res, j, i);
+//       // TODO: Convert string here to Matlab Symbolic format.
+//       result[idx] = se_parse(basic_str(s));
+//       idx++;
+//     }
+//   }
+//
+//   basic_free_heap(s);
+//   dense_matrix_free(mat);
+//   dense_matrix_free(res);
+// }
+//
+// void ml_linalg_schur(int len, char **A, char **U, char **T) {
+//   auto mat = dense_matrix_new_rows_cols(len, len);
+//   auto res_U = dense_matrix_new_rows_cols(len, len);
+//   auto res_T = dense_matrix_new_rows_cols(len, len);
+//   auto s = basic_new_heap();
+//
+//   int i = 0;
+//   int j = 0;
+//   int idx = 0;
+//   for (i = 0; i < len; i++) {
+//     for (j = 0; j < len; j++) {
+//       basic_parse(s, A[idx++]);
+//       dense_matrix_set_basic(mat, j, i, s);
+//     }
+//   }
+//
+//   linalg_schur(mat, res_U, res_T);
+//
+//   idx = 0;
+//   for(i = 0; i < len; i++) { // rows
+//     for (j = 0; j < len; j++) { // cols
+//       dense_matrix_get_basic(s, res_U, j, i);
+//       U[idx] = se_parse(basic_str(s));
+//
+//       dense_matrix_get_basic(s, res_T, j, i);
+//       T[idx] = se_parse(basic_str(s));
+//
+//       idx++;
+//     }
+//   }
+//
+//   basic_free_heap(s);
+//   dense_matrix_free(mat);
+//   dense_matrix_free(res_U);
+//   dense_matrix_free(res_T);
+// }
+//
+// void ml_linalg_eigenvalues(int len, char **A, char **l, char **v) {
+//   auto mat = dense_matrix_new_rows_cols(len, len);
+//   auto res_l = vecbasic_new();
+//   auto res_v = dense_matrix_new_rows_cols(len, len);
+//   auto s = basic_new_heap();
+//
+//   int i = 0;
+//   int j = 0;
+//   int idx = 0;
+//   for (i = 0; i < len; i++) {
+//     for (j = 0; j < len; j++) {
+//       basic_parse(s, A[idx++]);
+//       dense_matrix_set_basic(mat, i, j, s);
+//     }
+//   }
+//
+//   linalg_eigenvalues(mat, res_l, res_v);
+//
+//   idx = 0;
+//   for(i = 0; i < len; i++) { // rows
+//     vecbasic_get(res_l, i, s);
+//     l[i] = se_parse(basic_str(s));
+//
+//     for (j = 0; j < len; j++) { // cols
+//       dense_matrix_get_basic(s, res_v, j, i);
+//       v[idx] = se_parse(basic_str(s));
+//
+//       idx++;
+//     }
+//   }
+//
+//   basic_free_heap(s);
+//   vecbasic_free(res_l);
+//   dense_matrix_free(res_v);
+// }
+//
+// void ml_linalg_first_eigenvalue(int len, char **A, char **l, double tol) {
+//   auto mat = dense_matrix_new_rows_cols(len, len);
+//   auto s = basic_new_heap();
+//
+//   int i = 0;
+//   int j = 0;
+//   int idx = 0;
+//   for (i = 0; i < len; i++) {
+//     for (j = 0; j < len; j++) {
+//       basic_parse(s, A[idx++]);
+//       dense_matrix_set_basic(mat, i, j, s);
+//     }
+//   }
+//
+//   linalg_first_eigenvalue(mat, s, tol);
+//
+//   l[0] = se_parse(basic_str(s));
+//   // dense_matrix_set_basic(l, 0, 0, se_parse(basic_str(s)));
+//
+//   basic_free_heap(s);
+//   dense_matrix_free(mat);
+//   // dense_matrix_free(res);
+// }
 
 // ----------------------------------------------------------------------
-// State Space wrapper functions.
+// State space wrapper functions.
 //
 StateSpace_C* ml_statespace_new() {
   return statespace_new();
@@ -220,7 +220,7 @@ void ml_statespace_states_get(StateSpace_C *obj, char **result) {
   for(i = 0; i < sz; i++) {
     statespace_states_get(obj, i, s);
     // TODO: Convert string here to Matlab Symbolic format.
-    result[i] = basic_str(s);
+    result[i] = se_parse(basic_str(s));
   }
   basic_free_heap(s);
 }
@@ -234,7 +234,8 @@ void ml_statespace_states_set(StateSpace_C *obj, int len, const char** arg) {
 
     if(i >= sz) {
       statespace_states_push_back(obj, s);
-    } else {
+    }
+    else {
       statespace_states_set(obj, i, s);
     }
   }
@@ -251,7 +252,7 @@ void ml_statespace_inputs_get(StateSpace_C *obj, char **result) {
   for(i = 0; i < sz; i++) {
     statespace_inputs_get(obj, i, s);
     // TODO: Convert string here to Matlab Symbolic format.
-    result[i] = basic_str(s);
+    result[i] = se_parse(basic_str(s));
   }
   basic_free_heap(s);
 }
@@ -265,7 +266,8 @@ void ml_statespace_inputs_set(StateSpace_C *obj, int len, const char** arg) {
 
     if(i >= sz) {
       statespace_inputs_push_back(obj, s);
-    } else {
+    }
+    else {
       statespace_inputs_set(obj, i, s);
     }
   }
@@ -296,7 +298,8 @@ void ml_statespace_f_set(StateSpace_C *obj, int len, const char** arg) {
 
     if(i >= sz) {
       statespace_f_push_back(obj, s);
-    } else {
+    }
+    else {
       statespace_f_set(obj, i, s);
     }
   }
@@ -327,7 +330,8 @@ void ml_statespace_g_set(StateSpace_C *obj, int len, const char** arg) {
 
     if(i >= sz) {
       statespace_g_push_back(obj, s);
-    } else {
+    }
+    else {
       statespace_g_set(obj, i, s);
     }
   }
@@ -552,6 +556,102 @@ void ml_statespace_obsv(StateSpace_C *obj, char **result) {
   dense_matrix_free(mat);
 }
 
+// ----------------------------------------------------------------------
+// Transfer function wrapper functions.
+//
+TransferFunction_C* ml_transferfunction_new() {
+  return transferfunction_new();
+}
+
+void ml_transferfunction_free(TransferFunction_C *obj) {
+  transferfunction_free(obj);
+}
+
+void ml_transferfunction_var_get(TransferFunction_C *obj, char **result) {
+  auto s = basic_new_heap();
+  transferfunction_var_get(obj, s);
+  result[0] = se_parse(basic_str(s));
+  basic_free_heap(s);
+}
+void ml_transferfunction_var_set(TransferFunction_C *obj, const char** arg) {
+  auto s = basic_new_heap();
+  basic_parse(s, arg[0]);
+  transferfunction_var_set(obj, s);
+  basic_free_heap(s);
+}
+
+void ml_transferfunction_num_get(TransferFunction_C *obj, char **result) {
+  size_t sz = transferfunction_num_size(obj);
+  auto s = basic_new_heap();
+  int i = 0;
+  for (i = 0; i < sz; i++) {
+    transferfunction_num_get(obj, i, s);
+    result[i] = se_parse(basic_str(s));
+  }
+  basic_free_heap(s);
+}
+void ml_transferfunction_num_set(TransferFunction_C *obj, int len, const char** arg) {
+  size_t sz = transferfunction_num_size(obj);
+  auto s = basic_new_heap();
+  int i = 0;
+  for(i = 0; i < len; i++) {
+    // TODO: Convert arg[i] here to SymEngine format. Pass the formatted string.
+    basic_parse(s, arg[i]);
+
+    if(i >= sz) {
+      transferfunction_num_push_back(obj, s);
+    }
+    else {
+      transferfunction_num_set(obj, i, s);
+    }
+  }
+  basic_free_heap(s);
+}
+int ml_transferfunction_num_size(TransferFunction_C *obj) {
+  return transferfunction_num_size(obj);
+}
+
+void ml_transferfunction_den_get(TransferFunction_C *obj, char **result) {
+  size_t sz = transferfunction_den_size(obj);
+  auto s = basic_new_heap();
+  int i = 0;
+  for (i = 0; i < sz; i++) {
+    transferfunction_den_get(obj, i, s);
+    result[i] = se_parse(basic_str(s));
+  }
+  basic_free_heap(s);
+}
+void ml_transferfunction_den_set(TransferFunction_C *obj, int len, const char** arg) {
+  size_t sz = transferfunction_den_size(obj);
+  auto s = basic_new_heap();
+  int i = 0;
+  for(i = 0; i < len; i++) {
+    // TODO: Convert arg[i] here to SymEngine format. Pass the formatted string.
+    basic_parse(s, arg[i]);
+
+    if(i >= sz) {
+      transferfunction_den_push_back(obj, s);
+    }
+    else {
+      transferfunction_den_set(obj, i, s);
+    }
+  }
+  basic_free_heap(s);
+}
+int ml_transferfunction_den_size(TransferFunction_C *obj) {
+  return transferfunction_den_size(obj);
+}
+
+// ----------------------------------------------------------------------
+// StdFunction wrapper functions.
+//
+StdFunction_C* ml_std_function_new(int (*arg)(int)) {
+  return std_function_new(arg);
+}
+void ml_std_function_free(StdFunction_C *obj) {
+  std_function_free(obj);
+}
+
 // // ----------------------------------------------------------------------
 // // MDP wrapper functions.
 // //
@@ -666,5 +766,176 @@ void ml_statespace_obsv(StateSpace_C *obj, char **result) {
 //   mdp_gamma_set(obj, arg);
 // }
 
+// ----------------------------------------------------------------------
+// ODE solver wrapper functions.
+//
+OdeOptions_C* ml_odeoptions_new() {
+  return odeoptions_new();
+}
+void ml_odeoptions_free(OdeOptions_C *obj) {
+  odeoptions_free(obj);
+}
+
+double ml_odeoptions_step_size_get(OdeOptions_C *obj) {
+  return odeoptions_step_size_get(obj);
+}
+void ml_odeoptions_step_size_set(OdeOptions_C *obj, const double arg) {
+  odeoptions_step_size_set(obj, arg);
+}
+
+void ml_slv_ode_euler(StateSpace_C *obj,
+                      const double *t_span,
+                      const int t_span_len,
+                      const double *x0,
+                      const int x0_len,
+                      double *t_result,
+                      double *x_result,
+                      OdeOptions_C *options) {
+  //
+  slv_ode_euler(obj, t_span, t_span_len, x0, x0_len,
+                t_result, x_result, options);
+}
+
+// ----------------------------------------------------------------------
+// Random variable wrapper functions.
+//
+RandomDevice_C *ml_random_device_new() {
+  return random_device_new();
+}
+void ml_random_device_init(RandomDevice_C *obj) {
+  random_device_init(obj);
+}
+void ml_random_device_free(RandomDevice_C *obj) {
+  random_device_free(obj);
+}
+
+RandomDistribution_C *ml_random_number_distribution_new() {
+  return random_number_distribution_new();
+}
+
+void ml_uniform_int_distribution_set(RandomDistribution_C *obj,
+                                     const int a,
+                                     const int b) {
+  uniform_int_distribution_set(obj, a, b);
+}
+void ml_uniform_real_distribution_set(RandomDistribution_C *obj,
+                                      const double a,
+                                      const double b) {
+  uniform_real_distribution_set(obj, a, b);
+}
+// void ml_bernoulli_distribution_set(RandomDistribution_C *obj,
+//                                    const double p) {
+//   bernoulli_distribution_set(obj, p);
+// }
+void ml_negative_binomial_distribution_set(RandomDistribution_C *obj,
+                                           const int k,
+                                           const double p) {
+  negative_binomial_distribution_set(obj, k, p);
+}
+void ml_geometric_distribution_set(RandomDistribution_C *obj,
+                                   const double p) {
+  geometric_distribution_set(obj, p);
+}
+void ml_poisson_distribution_set(RandomDistribution_C *obj,
+                                 const double mean) {
+  poisson_distribution_set(obj, mean);
+}
+void ml_exponential_distribution_set(RandomDistribution_C *obj,
+                                     const double lambda) {
+  exponential_distribution_set(obj, lambda);
+}
+void ml_gamma_distribution_set(RandomDistribution_C *obj,
+                               const double alpha,
+                               const double beta) {
+  gamma_distribution_set(obj, alpha, beta);
+}
+void ml_weibull_distribution_set(RandomDistribution_C *obj,
+                                 const double a,
+                                 const double b) {
+  weibull_distribution_set(obj, a, b);
+}
+void ml_extreme_value_distribution_set(RandomDistribution_C *obj,
+                                       const double a,
+                                       const double b) {
+  extreme_value_distribution_set(obj, a, b);
+}
+void ml_normal_distribution_set(RandomDistribution_C *obj,
+                                const double mean,
+                                const double stddev) {
+  normal_distribution_set(obj, mean, stddev);
+}
+void ml_lognormal_distribution_set(RandomDistribution_C *obj,
+                                   const double m,
+                                   const double s) {
+  lognormal_distribution_set(obj, m, s);
+}
+void ml_chi_squared_distribution_set(RandomDistribution_C *obj,
+                                     const double n) {
+  chi_squared_distribution_set(obj, n);
+}
+void ml_cauchy_distribution_set(RandomDistribution_C *obj,
+                                const double a,
+                                const double b) {
+  cauchy_distribution_set(obj, a, b);
+}
+void ml_fisher_f_distribution_set(RandomDistribution_C *obj,
+                                  const double m,
+                                  const double n) {
+  fisher_f_distribution_set(obj, m, n);
+}
+void ml_student_t_distribution_set(RandomDistribution_C *obj,
+                                   const double n) {
+  student_t_distribution_set(obj, n);
+}
+
+void ml_random_number_distribution_free(RandomDistribution_C *obj) {
+  random_number_distribution_free(obj);
+}
+
+RandomVariable_C *ml_random_variable_new(const char **arg,
+                                         RandomDistribution_C *d) {
+  auto s = random_variable_new();
+  random_variable_set(s, *arg, d);
+  return s;
+}
+void ml_random_variable_free(RandomVariable_C *obj) {
+  random_variable_free(obj);
+}
+void ml_random_variable_set(RandomVariable_C *obj,
+                            const char **arg,
+                            RandomDistribution_C *d) {
+  random_variable_set(obj, *arg, d);
+}
+// void ml_random_variable_distribution_set(RandomVariable_C *obj,
+//                                          RandomDistribution_C *d) {
+//   random_variable_distribution_set(obj, d);
+// }
+
+void ml_random_variable_name_get(RandomVariable_C *obj, char **result) {
+  // result[0] = se_parse(basic_str(obj));
+  // random_variable_name_get(obj, *result);
+  // std::string str = obj->m->__str__();
+  // auto cc = new char[str.length() + 1];
+  // std::strcpy(cc, str.c_str());
+  // result[0] = se_parse(cc);
+  random_variable_name_get(obj, result);
+}
+
+double ml_random_variable_sample(RandomVariable_C *obj, RandomDevice_C *g) {
+  return random_variable_sample(obj, g);
+}
+
+// ----------------------------------------------------------------------
+// Random variable replacement wrapper functions.
+//
+void ml_statespace_random_variable_replace(StateSpace_C *obj,
+                                           const char** key,
+                                           RandomVariable_C *mapped) {
+  //
+  auto k = basic_new_heap();
+  basic_parse(k, key[0]);
+  statespace_random_variable_replace(obj, k, mapped);
+  basic_free_heap(k);
+}
 
 } // C

@@ -21,15 +21,21 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) transferfunc
 
     properties (Dependent)
         % Numerator
-        Numerator
+        num
         % Denominator
-        Denominator
+        den
         % Variable
-        Variable
+        var
     end
 
+    % Transfer Function
     properties (Hidden, SetAccess = immutable, Dependent)
         tf
+    end
+
+    % Constants
+    properties (Access = private, Constant)
+        allowed = {'s', 'z', 'p', 'q'}
     end
 
     methods
@@ -52,176 +58,199 @@ classdef (SupportExtensionMethods = true, InferiorClasses = {?sym}) transferfunc
     end
 
     methods
-        function set.states(obj, s)
+        function set.var(obj, s)
             s = symctrl.mat2se(s);
 
             calllib('matctrl', ...
-                    'ml_statespace_states_set', ...
+                    'ml_transferfunction_var_set', ...
+                    obj.cobj_, ...
+                    s);
+        end
+
+        function var = get.var(obj)
+            c = cell(1);
+            cptr = libpointer('stringPtrPtr', c);
+
+            calllib('matctrl', ...
+                    'ml_transferfunction_var_get', ...
+                    obj.cobj_, ...
+                    cptr);
+
+            var = symctrl.se2mat(cptr.Value);
+
+            clear('cptr');
+        end
+
+        function set.num(obj, s)
+            s = symctrl.mat2se(s);
+
+            calllib('matctrl', ...
+                    'ml_transferfunction_num_set', ...
                     obj.cobj_, ...
                     numel(s), ...
                     s);
         end
 
-        function states = get.states(obj)
-            sz = calllib('matctrl', 'ml_statespace_states_size', obj.cobj_);
+        function num = get.num(obj)
+            sz = calllib('matctrl', 'ml_transferfunction_num_size', obj.cobj_);
 
             c = cell(1, sz);
             cptr = libpointer('stringPtrPtr', c);
 
             calllib('matctrl', ...
-                    'ml_statespace_states_get', ...
+                    'ml_transferfunction_num_get', ...
                     obj.cobj_, ...
                     cptr);
 
-            states = symctrl.se2mat(cptr.Value);
+            num = symctrl.se2mat(cptr.Value);
 
             clear('cptr');
         end
 
-        function set.inputs(obj, s)
+        function set.den(obj, s)
             s = symctrl.mat2se(s);
 
             calllib('matctrl', ...
-                    'ml_statespace_inputs_set', ...
+                    'ml_transferfunction_den_set', ...
                     obj.cobj_, ...
                     numel(s), ...
                     s);
         end
 
-        function inputs = get.inputs(obj)
-            sz = calllib('matctrl', 'ml_statespace_inputs_size', obj.cobj_);
+        function den = get.den(obj)
+            sz = calllib('matctrl', 'ml_transferfunction_den_size', obj.cobj_);
 
             c = cell(1, sz);
             cptr = libpointer('stringPtrPtr', c);
 
             calllib('matctrl', ...
-                    'ml_statespace_inputs_get', ...
+                    'ml_transferfunction_den_get', ...
                     obj.cobj_, ...
                     cptr);
 
-            inputs = symctrl.se2mat(cptr.Value);
-
-            clear('cptr');
-        end
-
-        function set.f(obj, s)
-            s = symctrl.mat2se(s);
-
-            calllib('matctrl', ...
-                    'ml_statespace_f_set', ...
-                    obj.cobj_, ...
-                    numel(s), ...
-                    s);
-        end
-
-        function f = get.f(obj)
-            sz = calllib('matctrl', 'ml_statespace_f_size', obj.cobj_);
-
-            c = cell(1, sz);
-            cptr = libpointer('stringPtrPtr', c);
-
-            calllib('matctrl', ...
-                    'ml_statespace_f_get', ...
-                    obj.cobj_, ...
-                    cptr);
-
-            f = symctrl.se2mat(cptr.Value);
-
-            clear('cptr');
-        end
-
-        function set.g(obj, s)
-            s = symctrl.mat2se(s);
-
-            calllib('matctrl', ...
-                    'ml_statespace_g_set', ...
-                    obj.cobj_, ...
-                    numel(s), ...
-                    s);
-        end
-
-        function g = get.g(obj)
-            sz = calllib('matctrl', 'ml_statespace_g_size', obj.cobj_);
-
-            c = cell(1, sz);
-            cptr = libpointer('stringPtrPtr', c);
-
-            calllib('matctrl', ...
-                    'ml_statespace_g_get', ...
-                    obj.cobj_, ...
-                    cptr);
-
-            g = symctrl.se2mat(cptr.Value);
-
-            clear('cptr');
-        end
-
-        function A = get.A(obj)
-            n = calllib('matctrl', 'ml_statespace_states_size', obj.cobj_);
-
-            c = cell(1, n^2);
-            cptr = libpointer('stringPtrPtr', c);
-
-            calllib('matctrl', ...
-                    'ml_statespace_A_get', ...
-                    obj.cobj_, ...
-                    cptr);
-
-            A = reshape(symctrl.se2mat(cptr.Value), n, n);
-
-            clear('cptr');
-        end
-
-        function B = get.B(obj)
-            n = calllib('matctrl', 'ml_statespace_states_size', obj.cobj_);
-            m = calllib('matctrl', 'ml_statespace_inputs_size', obj.cobj_);
-
-            c = cell(1, n*m);
-            cptr = libpointer('stringPtrPtr', c);
-
-            calllib('matctrl', ...
-                    'ml_statespace_B_get', ...
-                    obj.cobj_, ...
-                    cptr);
-
-            B = reshape(symctrl.se2mat(cptr.Value), n, m);
-
-            clear('cptr');
-        end
-
-        function C = get.C(obj)
-            n = calllib('matctrl', 'ml_statespace_states_size', obj.cobj_);
-            p = calllib('matctrl', 'ml_statespace_g_size', obj.cobj_);
-
-            c = cell(1, n*p);
-            cptr = libpointer('stringPtrPtr', c);
-
-            calllib('matctrl', ...
-                    'ml_statespace_C_get', ...
-                    obj.cobj_, ...
-                    cptr);
-
-            C = reshape(symctrl.se2mat(cptr.Value), p, n);
-
-            clear('cptr');
-        end
-
-        function D = get.D(obj)
-            m = calllib('matctrl', 'ml_statespace_inputs_size', obj.cobj_);
-            p = calllib('matctrl', 'ml_statespace_g_size', obj.cobj_);
-
-            c = cell(1, m*p);
-            cptr = libpointer('stringPtrPtr', c);
-
-            calllib('matctrl', ...
-                    'ml_statespace_D_get', ...
-                    obj.cobj_, ...
-                    cptr);
-
-            D = reshape(symctrl.se2mat(cptr.Value), p, m);
+            den = symctrl.se2mat(cptr.Value);
 
             clear('cptr');
         end
     end
 
+    % Overloaded operators.
+    methods
+        function C = plus(A, B)
+            %PLUS Overloaded to allow for transfer functions to be added
+            %without pole-zero cancellations.
+            C = transferfunction();
+            if ~isa(A, 'transferfunction')
+                G = B;
+                H = A;
+            else
+                G = A;
+                H = B;
+            end
+
+            C.var = G.var;
+
+            if ~isa(H, 'transferfunction')
+                if ~isa(H, 'sym')
+                    H = sym(H);
+                end
+
+                [N, D] = numden(H);
+                C.num = G.num*D + N*G.den;
+                C.den = G.den*D;
+            else
+                if G.var ~= H.var
+                    error('Transfer functions must have the same variable.');
+                end
+                C.num = G.num*H.den + H.num*G.den;
+                C.den = G.den*H.den;
+            end
+        end
+
+        function C = mtimes(A, B)
+            %MTIMES Overloaded to allow for transfer functions to be
+            %multiplied without pole-zero cancellations.
+            C = transferfunction();
+            if ~isa(A, 'transferfunction')
+                G = B;
+                H = A;
+            else
+                G = A;
+                H = B;
+            end
+
+            C.var = G.var;
+
+            if ~isa(H, 'transferfunction')
+                if ~isa(H, 'sym')
+                    H = sym(H);
+                end
+
+                [N, D] = numden(H);
+                C.num = G.num*N;
+                C.den = G.den*D;
+            else
+                if G.var ~= H.var
+                    error('Transfer functions must have the same variable.');
+                end
+                C.num = G.num*H.num;
+                C.den = G.den*H.den;
+            end
+        end
+
+        function C = mrdivide(A, B)
+            %MRDIVIDE Overloaded to allow for transfer functions to be
+            %divided without pole-zero cancellations.
+            C = transferfunction();
+            if ~isa(A, 'transferfunction')
+                G = B;
+                G.num = B.den;
+                G.den = B.num;
+                H = A;
+            else
+                G = A;
+                H = B;
+            end
+
+            C.var = G.var;
+
+            if ~isa(H, 'transferfunction')
+                C.num = G.num;
+                C.den = G.den*H;
+            else
+                if G.var ~= H.var
+                    error('Transfer functions must have the same variable.');
+                end
+                C.num = G.num*H.den;
+                C.den = G.den*H.num;
+            end
+        end
+
+        function C = mpower(A, B)
+            %MPOWER Overloaded to allow for transfer functions to use the
+            %matrix power operator without pole-zero cancellations.
+            C = transferfunction();
+            if ~isa(A, 'transferfunction')
+                G = B;
+                H = A;
+            else
+                G = A;
+                H = B;
+            end
+
+            C.var = G.var;
+
+            if ~isa(H, 'transferfunction')
+                C.num = G.num^H;
+                C.den = G.den^H;
+            else
+                if G.var ~= H.var
+                    error('Transfer functions must have the same variable.');
+                end
+
+                C.num = G.num^H;
+                C.den = G.den^H;
+            end
+        end
+    end
 end
