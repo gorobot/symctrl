@@ -1,0 +1,6 @@
+#ifndef SYMCTRL_STATE_HPP
+#define SYMCTRL_STATE_HPP
+
+
+
+#endif // SYMCTRL_STATE_HPP
